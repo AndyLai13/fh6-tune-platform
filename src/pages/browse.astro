@@ -29,10 +29,10 @@ const typeRowsResult = await env.DB.prepare("SELECT tune_type, COUNT(*) AS n FRO
 (typeRowsResult.results as Array<{ tune_type: string; n: number }>).forEach((r) => { counts.type[r.tune_type] = r.n; });
 ---
 
-<Base title="Browse tunes">
+<Base title="瀏覽調校">
   <section class="px-6 pt-8 max-w-7xl mx-auto">
-    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ BROWSE TUNES</div>
-    <h1 class="text-[32px] font-extrabold mb-1">{rows.length} tunes</h1>
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ 瀏覽調校</div>
+    <h1 class="text-[32px] font-extrabold mb-1">{rows.length} 筆調校</h1>
   </section>
   <section class="px-6 py-6 max-w-7xl mx-auto grid grid-cols-[240px_1fr] gap-7">
     <FilterSidebar

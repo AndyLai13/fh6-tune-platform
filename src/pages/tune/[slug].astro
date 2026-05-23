@@ -28,9 +28,9 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
           <span class="text-text">@{tune.author_handle}</span>
           <span class="text-text-dim">|</span>
           <span class="text-cyan">★ {avgRating.toFixed(1)}</span>
-          <span class="text-text-dim">({tune.rating_count} reviews)</span>
+          <span class="text-text-dim">（{tune.rating_count} 則評論）</span>
           <span class="text-text-dim">|</span>
-          <span class="text-text-dim">↓ <span class="text-text">{tune.download_count.toLocaleString()}</span> downloads</span>
+          <span class="text-text-dim">↓ <span class="text-text">{tune.download_count.toLocaleString()}</span> 次下載</span>
         </div>
       </div>
       <ShareCodeBox code={tune.share_code} tuneId={tune.id} tuneSlug={tune.slug} />
@@ -38,21 +38,21 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
 
     {tune.description && (
       <div class="mt-6 p-5 bg-bg-card border-l-[3px] border-pink">
-        <div class="font-mono text-[10px] text-pink tracking-wider2 mb-1.5">＞ TUNER NOTES</div>
+        <div class="font-mono text-[10px] text-pink tracking-wider2 mb-1.5">＞ 調校師備註</div>
         <p class="leading-relaxed text-text-soft text-[14px] m-0">{tune.description}</p>
       </div>
     )}
   </section>
 
   <section class="px-6 pb-12 max-w-6xl mx-auto">
-    <h2 class="text-[24px] font-bold mb-4">All values</h2>
+    <h2 class="text-[24px] font-bold mb-4">全部數值</h2>
     <TuneValuesGrid values={values} />
   </section>
 
   <section class="px-6 pb-12 max-w-6xl mx-auto">
-    <h2 class="text-[20px] font-bold mb-4">Reviews · {tune.rating_count}</h2>
+    <h2 class="text-[20px] font-bold mb-4">評論 · {tune.rating_count}</h2>
     {reviews.length === 0 ? (
-      <p class="text-text-mute">No reviews yet. Be the first.</p>
+      <p class="text-text-mute">目前還沒有評論，當第一位吧。</p>
     ) : (
       <div class="grid grid-cols-2 gap-3.5">
         {reviews.map((r) => (

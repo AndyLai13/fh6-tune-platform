@@ -5,83 +5,83 @@ const { values } = Astro.props;
 ---
 <div class="grid grid-cols-3 gap-px bg-line font-mono">
   <div class="bg-bg-card p-4">
-    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">TIRES</div>
+    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">輪胎</div>
     <div class="grid grid-cols-[1fr_auto_auto] gap-y-1.5 gap-x-3 text-[12px]">
-      <div class="text-text-dim">Pressure</div><div class="text-text-mute text-[10px]">F</div><div class="text-text-mute text-[10px]">R</div>
+      <div class="text-text-dim">胎壓</div><div class="text-text-mute text-[10px]">前</div><div class="text-text-mute text-[10px]">後</div>
       <div class="text-text-dim">psi</div><div class="text-text text-right">{values.tires.pressure_f}</div><div class="text-text text-right">{values.tires.pressure_r}</div>
     </div>
   </div>
 
   <div class="bg-bg-card p-4">
-    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">GEARING</div>
+    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">變速箱</div>
     <div class="grid grid-cols-[1fr_auto] gap-y-1.5 gap-x-3 text-[12px]">
-      <div class="text-text-dim">Final drive</div><div class="text-text text-right">{values.gearing.final}</div>
-      <div class="text-text-dim">1st</div><div class="text-text text-right">{values.gearing.g1}</div>
-      <div class="text-text-dim">2nd</div><div class="text-text text-right">{values.gearing.g2}</div>
-      <div class="text-text-dim">3rd</div><div class="text-text text-right">{values.gearing.g3}</div>
-      <div class="text-text-dim">4th</div><div class="text-text text-right">{values.gearing.g4}</div>
-      <div class="text-text-dim">5th</div><div class="text-text text-right">{values.gearing.g5}</div>
-      <div class="text-text-dim">6th</div><div class="text-text text-right">{values.gearing.g6}</div>
+      <div class="text-text-dim">終傳比</div><div class="text-text text-right">{values.gearing.final}</div>
+      <div class="text-text-dim">1 檔</div><div class="text-text text-right">{values.gearing.g1}</div>
+      <div class="text-text-dim">2 檔</div><div class="text-text text-right">{values.gearing.g2}</div>
+      <div class="text-text-dim">3 檔</div><div class="text-text text-right">{values.gearing.g3}</div>
+      <div class="text-text-dim">4 檔</div><div class="text-text text-right">{values.gearing.g4}</div>
+      <div class="text-text-dim">5 檔</div><div class="text-text text-right">{values.gearing.g5}</div>
+      <div class="text-text-dim">6 檔</div><div class="text-text text-right">{values.gearing.g6}</div>
     </div>
   </div>
 
   <div class="bg-bg-card p-4">
-    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">ALIGNMENT</div>
+    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">定位</div>
     <div class="grid grid-cols-[1fr_auto_auto] gap-y-1.5 gap-x-3 text-[12px]">
-      <div></div><div class="text-text-mute text-[10px]">F</div><div class="text-text-mute text-[10px]">R</div>
-      <div class="text-text-dim">Camber °</div><div class="text-text text-right">{values.alignment.camber_f}</div><div class="text-text text-right">{values.alignment.camber_r}</div>
-      <div class="text-text-dim">Toe °</div><div class="text-text text-right">{values.alignment.toe_f}</div><div class="text-text text-right">{values.alignment.toe_r}</div>
-      <div class="text-text-dim">Caster °</div><div class="text-text text-right">{values.alignment.caster}</div><div class="text-text-dim text-center">—</div>
+      <div></div><div class="text-text-mute text-[10px]">前</div><div class="text-text-mute text-[10px]">後</div>
+      <div class="text-text-dim">外傾角 °</div><div class="text-text text-right">{values.alignment.camber_f}</div><div class="text-text text-right">{values.alignment.camber_r}</div>
+      <div class="text-text-dim">束角 °</div><div class="text-text text-right">{values.alignment.toe_f}</div><div class="text-text text-right">{values.alignment.toe_r}</div>
+      <div class="text-text-dim">後傾角 °</div><div class="text-text text-right">{values.alignment.caster}</div><div class="text-text-dim text-center">—</div>
     </div>
   </div>
 
   <div class="bg-bg-card p-4">
-    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">ANTI-ROLL BARS</div>
+    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">防傾桿</div>
     <div class="grid grid-cols-[1fr_auto_auto] gap-y-1.5 gap-x-3 text-[12px]">
-      <div></div><div class="text-text-mute text-[10px]">F</div><div class="text-text-mute text-[10px]">R</div>
-      <div class="text-text-dim">Stiffness</div><div class="text-text text-right">{values.antiroll.stiffness_f}</div><div class="text-text text-right">{values.antiroll.stiffness_r}</div>
+      <div></div><div class="text-text-mute text-[10px]">前</div><div class="text-text-mute text-[10px]">後</div>
+      <div class="text-text-dim">硬度</div><div class="text-text text-right">{values.antiroll.stiffness_f}</div><div class="text-text text-right">{values.antiroll.stiffness_r}</div>
     </div>
   </div>
 
   <div class="bg-bg-card p-4">
-    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">SPRINGS</div>
+    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">彈簧</div>
     <div class="grid grid-cols-[1fr_auto_auto] gap-y-1.5 gap-x-3 text-[12px]">
-      <div></div><div class="text-text-mute text-[10px]">F</div><div class="text-text-mute text-[10px]">R</div>
-      <div class="text-text-dim">Rate lb/in</div><div class="text-text text-right">{values.springs.rate_f}</div><div class="text-text text-right">{values.springs.rate_r}</div>
-      <div class="text-text-dim">Ride height in</div><div class="text-text text-right">{values.springs.height_f}</div><div class="text-text text-right">{values.springs.height_r}</div>
+      <div></div><div class="text-text-mute text-[10px]">前</div><div class="text-text-mute text-[10px]">後</div>
+      <div class="text-text-dim">彈簧係數 lb/in</div><div class="text-text text-right">{values.springs.rate_f}</div><div class="text-text text-right">{values.springs.rate_r}</div>
+      <div class="text-text-dim">車身高度 in</div><div class="text-text text-right">{values.springs.height_f}</div><div class="text-text text-right">{values.springs.height_r}</div>
     </div>
   </div>
 
   <div class="bg-bg-card p-4">
-    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">DAMPING</div>
+    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">阻尼</div>
     <div class="grid grid-cols-[1fr_auto_auto] gap-y-1.5 gap-x-3 text-[12px]">
-      <div></div><div class="text-text-mute text-[10px]">F</div><div class="text-text-mute text-[10px]">R</div>
-      <div class="text-text-dim">Rebound</div><div class="text-text text-right">{values.damping.rebound_f}</div><div class="text-text text-right">{values.damping.rebound_r}</div>
-      <div class="text-text-dim">Bump</div><div class="text-text text-right">{values.damping.bump_f}</div><div class="text-text text-right">{values.damping.bump_r}</div>
+      <div></div><div class="text-text-mute text-[10px]">前</div><div class="text-text-mute text-[10px]">後</div>
+      <div class="text-text-dim">回彈</div><div class="text-text text-right">{values.damping.rebound_f}</div><div class="text-text text-right">{values.damping.rebound_r}</div>
+      <div class="text-text-dim">壓縮</div><div class="text-text text-right">{values.damping.bump_f}</div><div class="text-text text-right">{values.damping.bump_r}</div>
     </div>
   </div>
 
   <div class="bg-bg-card p-4">
-    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">AERO</div>
+    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">空力</div>
     <div class="grid grid-cols-[1fr_auto] gap-y-1.5 gap-x-3 text-[12px]">
-      <div class="text-text-dim">Front splitter lb</div><div class="text-text text-right">{values.aero.front}</div>
-      <div class="text-text-dim">Rear wing lb</div><div class="text-text text-right">{values.aero.rear}</div>
+      <div class="text-text-dim">前下擾流 lb</div><div class="text-text text-right">{values.aero.front}</div>
+      <div class="text-text-dim">後尾翼 lb</div><div class="text-text text-right">{values.aero.rear}</div>
     </div>
   </div>
 
   <div class="bg-bg-card p-4">
-    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">BRAKES</div>
+    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">煞車</div>
     <div class="grid grid-cols-[1fr_auto] gap-y-1.5 gap-x-3 text-[12px]">
-      <div class="text-text-dim">Balance % F</div><div class="text-text text-right">{values.brakes.balance_pct_f}</div>
-      <div class="text-text-dim">Pressure %</div><div class="text-text text-right">{values.brakes.pressure_pct}</div>
+      <div class="text-text-dim">前後分配 % F</div><div class="text-text text-right">{values.brakes.balance_pct_f}</div>
+      <div class="text-text-dim">煞車力 %</div><div class="text-text text-right">{values.brakes.pressure_pct}</div>
     </div>
   </div>
 
   <div class="bg-bg-card p-4">
-    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">DIFFERENTIAL</div>
+    <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">差速器</div>
     <div class="grid grid-cols-[1fr_auto] gap-y-1.5 gap-x-3 text-[12px]">
-      <div class="text-text-dim">Accel %</div><div class="text-text text-right">{values.diff.accel_pct}</div>
-      <div class="text-text-dim">Decel %</div><div class="text-text text-right">{values.diff.decel_pct}</div>
+      <div class="text-text-dim">加速鎖定 %</div><div class="text-text text-right">{values.diff.accel_pct}</div>
+      <div class="text-text-dim">減速鎖定 %</div><div class="text-text text-right">{values.diff.decel_pct}</div>
     </div>
   </div>
 </div>

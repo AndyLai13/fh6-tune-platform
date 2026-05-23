@@ -14,28 +14,28 @@ const trending = (trendingResult.results ?? []) as Array<any>;
 const statsRow = await env.DB.prepare("SELECT COUNT(*) AS tunes, COUNT(DISTINCT author_handle) AS tuners, COUNT(DISTINCT car_id) AS cars FROM tunes WHERE status='public'").first<{ tunes: number; tuners: number; cars: number }>();
 ---
 
-<Base title="touge.gg" description="The tune database for Forza Horizon 6.">
+<Base title="touge.gg" description="Forza Horizon 6 調校資料庫。">
   <section class="px-6 py-12 max-w-6xl mx-auto">
     <div class="font-mono text-[11px] text-pink tracking-wider3 mb-3.5">＞ FORZA HORIZON 6 / JAPAN</div>
     <h1 class="text-[56px] font-extrabold leading-[1.05] mb-4">
-      The tune database<br/>
-      <span class="bg-gradient-to-r from-cyan to-pink bg-clip-text text-transparent">for serious drivers.</span>
+      認真跑山的人<br/>
+      <span class="bg-gradient-to-r from-cyan to-pink bg-clip-text text-transparent">都來這裡找調校。</span>
     </h1>
-    <p class="text-[16px] text-text-mute max-w-[560px] leading-relaxed">{statsRow?.tunes ?? 0} tunes across every car in FH6. Drift the touge. Grip the circuit. Find what works, share what you built.</p>
+    <p class="text-[16px] text-text-mute max-w-[560px] leading-relaxed">FH6 全車系 {statsRow?.tunes ?? 0} 筆調校。漂峠道、抓賽道，找到能用的、分享你跑出來的。</p>
   </section>
 
   <section class="border-y border-line px-6 py-5 bg-bg-soft">
     <div class="max-w-6xl mx-auto grid grid-cols-4 gap-8">
-      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">TUNES</div><div class="text-[24px] font-bold">{statsRow?.tunes ?? 0}</div></div>
-      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">TUNERS</div><div class="text-[24px] font-bold">{statsRow?.tuners ?? 0}</div></div>
-      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">CARS COVERED</div><div class="text-[24px] font-bold">{statsRow?.cars ?? 0}</div></div>
-      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">UPDATED</div><div class="text-[24px] font-bold text-cyan">just now</div></div>
+      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">調校總數</div><div class="text-[24px] font-bold">{statsRow?.tunes ?? 0}</div></div>
+      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">調校師</div><div class="text-[24px] font-bold">{statsRow?.tuners ?? 0}</div></div>
+      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">收錄車輛</div><div class="text-[24px] font-bold">{statsRow?.cars ?? 0}</div></div>
+      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">更新</div><div class="text-[24px] font-bold text-cyan">剛剛</div></div>
     </div>
   </section>
 
   <section class="px-6 py-12 max-w-6xl mx-auto">
-    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ FEATURED THIS WEEK</div>
-    <h2 class="text-[26px] font-bold mb-6">Editors' picks</h2>
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ 本週精選</div>
+    <h2 class="text-[26px] font-bold mb-6">編輯精選</h2>
     <div class="grid grid-cols-3 gap-4">
       {featured.map((r: any, i: number) => (
         <TuneCard
@@ -50,8 +50,8 @@ const statsRow = await env.DB.prepare("SELECT COUNT(*) AS tunes, COUNT(DISTINCT 
   </section>
 
   <section class="px-6 pb-12 max-w-6xl mx-auto">
-    <div class="font-mono text-[11px] text-cyan tracking-wider3 mb-2">＞ TRENDING NOW</div>
-    <h2 class="text-[22px] font-bold mb-4">Most downloaded this week</h2>
+    <div class="font-mono text-[11px] text-cyan tracking-wider3 mb-2">＞ 熱門中</div>
+    <h2 class="text-[22px] font-bold mb-4">本週下載最多</h2>
     <div class="space-y-px bg-line">
       {trending.map((r: any, i: number) => (
         <a href={`/tune/${r.slug}`} class="bg-bg-card p-4 grid grid-cols-[30px_1fr_90px_60px_70px] gap-4 items-center text-[13px] no-underline">

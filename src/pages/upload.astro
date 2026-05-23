@@ -10,31 +10,31 @@ const sample = sampleTuneValues();
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA';
 ---
 
-<Base title="Upload a tune">
+<Base title="上傳調校">
   <section class="px-6 py-8 max-w-5xl mx-auto">
-    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ NEW TUNE</div>
-    <h1 class="text-[30px] font-extrabold mb-6">Upload a tune</h1>
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ 新增調校</div>
+    <h1 class="text-[30px] font-extrabold mb-6">上傳調校</h1>
 
     <form id="upload-form" class="space-y-5">
       <fieldset class="bg-bg-card border-l-[3px] border-cyan p-5">
-        <legend class="font-mono text-[11px] text-cyan tracking-wider3">01 ＞ THE BASICS</legend>
+        <legend class="font-mono text-[11px] text-cyan tracking-wider3">01 ＞ 基本資料</legend>
         <div class="grid grid-cols-2 gap-4 mt-4">
           <label class="block">
-            <span class="label-mono">TUNE NAME</span>
+            <span class="label-mono">調校名稱</span>
             <input name="name" required maxlength="120" class="mt-1.5 w-full bg-bg border border-line text-text p-2.5" />
           </label>
           <label class="block">
-            <span class="label-mono">FH6 SHARE CODE</span>
+            <span class="label-mono">FH6 分享碼</span>
             <input name="share_code" required maxlength="32" class="mt-1.5 w-full bg-bg border border-cyan text-text p-2.5 font-mono text-[16px] font-bold tracking-wide" />
           </label>
           <label class="col-span-2 block">
-            <span class="label-mono">CAR</span>
+            <span class="label-mono">車輛</span>
             <select name="car_id" required class="mt-1.5 w-full bg-bg border border-line text-text p-2.5">
               {cars.map((c: any) => <option value={c.id}>{c.year} {c.make} {c.model}</option>)}
             </select>
           </label>
           <fieldset class="col-span-2">
-            <span class="label-mono">TUNE TYPE</span>
+            <span class="label-mono">調校類型</span>
             <div class="mt-2 flex gap-1.5 flex-wrap" data-type-group>
               {['touge','drift','grip','drag','rally','offroad'].map((t) => (
                 <button type="button" data-type={t} class="bg-transparent border border-line text-text-mute px-4 py-2 font-mono text-[11px] uppercase tracking-wider2">{t}</button>
@@ -46,45 +46,45 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
       </fieldset>
 
       <fieldset class="bg-bg-card border border-line p-5">
-        <legend class="font-mono text-[11px] text-text tracking-wider3">02 ＞ BUILD INFO</legend>
+        <legend class="font-mono text-[11px] text-text tracking-wider3">02 ＞ 性能規格</legend>
         <div class="grid grid-cols-4 gap-3.5 mt-4">
           <label class="block">
-            <span class="label-mono">PI CLASS</span>
+            <span class="label-mono">PI 等級</span>
             <select name="pi_class" class="mt-1.5 w-full bg-bg border border-line text-text p-2">
               {['D','C','B','A','S1','S2','X'].map((p) => <option>{p}</option>)}
             </select>
           </label>
           <label class="block">
-            <span class="label-mono">PI SCORE</span>
+            <span class="label-mono">PI 分數</span>
             <input type="number" name="pi_score" min="100" max="999" value="800" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
           </label>
           <label class="block">
-            <span class="label-mono">DRIVETRAIN</span>
+            <span class="label-mono">驅動方式</span>
             <select name="drivetrain" class="mt-1.5 w-full bg-bg border border-line text-text p-2">
               <option>RWD</option><option>AWD</option><option>FWD</option>
             </select>
           </label>
           <label class="block">
-            <span class="label-mono">POWER (HP)</span>
+            <span class="label-mono">馬力 (HP)</span>
             <input type="number" name="power_hp" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
           </label>
         </div>
       </fieldset>
 
       <fieldset class="bg-bg-card border border-line p-5">
-        <legend class="font-mono text-[11px] text-text tracking-wider3">03 ＞ TUNE VALUES (paste numbers from FH6)</legend>
-        <p class="text-text-dim text-[12px] mt-2">MVP shortcut: paste tune values as JSON. Per-field inputs will be added in v1.1.</p>
+        <legend class="font-mono text-[11px] text-text tracking-wider3">03 ＞ 調校數值（從 FH6 貼上）</legend>
+        <p class="text-text-dim text-[12px] mt-2">MVP 暫用：直接以 JSON 貼上調校數值。v1.1 將提供逐欄輸入。</p>
         <textarea name="_tune_values_json" rows="10" class="mt-2 w-full bg-bg border border-line text-text font-mono text-[11px] p-2">{JSON.stringify(sample, null, 2)}</textarea>
       </fieldset>
 
       <fieldset class="bg-bg-card border border-line p-5">
-        <legend class="font-mono text-[11px] text-text tracking-wider3">04 ＞ DESCRIPTION & TRACKS</legend>
+        <legend class="font-mono text-[11px] text-text tracking-wider3">04 ＞ 說明與賽道</legend>
         <label class="block mt-3">
-          <span class="label-mono">TUNER NOTES</span>
+          <span class="label-mono">調校師備註</span>
           <textarea name="description" rows="4" maxlength="4000" class="mt-1.5 w-full bg-bg border border-line text-text p-2.5"></textarea>
         </label>
         <label class="block mt-3">
-          <span class="label-mono">RECOMMENDED TRACKS</span>
+          <span class="label-mono">推薦賽道</span>
           <select name="track_ids" multiple size="5" class="mt-1.5 w-full bg-bg border border-line text-text p-2">
             {tracks.map((t: any) => <option value={t.id}>{t.name}</option>)}
           </select>
@@ -92,14 +92,14 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
       </fieldset>
 
       <fieldset class="bg-bg-card border border-line p-5">
-        <legend class="font-mono text-[11px] text-text tracking-wider3">05 ＞ AUTHOR</legend>
+        <legend class="font-mono text-[11px] text-text tracking-wider3">05 ＞ 作者</legend>
         <div class="grid grid-cols-2 gap-3.5 mt-3.5">
           <label class="block">
-            <span class="label-mono">DISPLAY NAME</span>
+            <span class="label-mono">顯示名稱</span>
             <input name="author_handle" maxlength="40" placeholder="your_handle" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
           </label>
           <label class="block">
-            <span class="label-mono">EDIT PASSWORD</span>
+            <span class="label-mono">編輯密碼</span>
             <input name="edit_password" type="password" required minlength="6" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
           </label>
         </div>
@@ -110,7 +110,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
       <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
 
       <div class="flex justify-end gap-2.5">
-        <button type="submit" class="bg-cyan border-0 text-bg px-6 py-3 font-mono font-bold uppercase tracking-wider2">PUBLISH TUNE →</button>
+        <button type="submit" class="bg-cyan border-0 text-bg px-6 py-3 font-mono font-bold uppercase tracking-wider2">發佈調校 →</button>
       </div>
       <div id="upload-status" class="text-text-dim text-[12px]"></div>
     </form>
@@ -135,7 +135,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      status.textContent = 'Uploading…';
+      status.textContent = '上傳中…';
       const fd = new FormData(form);
       const body = {
         name: fd.get('name'),
@@ -161,9 +161,9 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
         const myTunes = JSON.parse(localStorage.getItem('mytunes') ?? '[]');
         myTunes.push({ slug: data.slug, editUrl: data.edit_url, savedAt: Date.now() });
         localStorage.setItem('mytunes', JSON.stringify(myTunes));
-        status.innerHTML = `Published. <a class="text-cyan" href="/tune/${data.slug}">View tune →</a><br/>Edit URL: <code>${data.edit_url}</code> — save this with your password.`;
+        status.innerHTML = `已發佈。<a class="text-cyan" href="/tune/${data.slug}">查看調校 →</a><br/>編輯網址：<code>${data.edit_url}</code> —— 請和密碼一起保存好。`;
       } else {
-        status.textContent = `Error: ${data.error}${data.details ? ' — ' + JSON.stringify(data.details) : ''}`;
+        status.textContent = `錯誤：${data.error}${data.details ? ' — ' + JSON.stringify(data.details) : ''}`;
       }
     });
   </script>

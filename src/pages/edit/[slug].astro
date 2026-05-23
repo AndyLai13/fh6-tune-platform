@@ -10,29 +10,29 @@ if (!tune) return Astro.redirect('/404');
 const values = JSON.parse(tune.tune_values);
 ---
 
-<Base title={`Edit ${tune.name}`}>
+<Base title={`編輯 ${tune.name}`}>
   <section class="px-6 py-8 max-w-3xl mx-auto">
-    <h1 class="text-[26px] font-bold mb-5">Edit tune</h1>
+    <h1 class="text-[26px] font-bold mb-5">編輯調校</h1>
     <form id="edit-form" class="space-y-4">
       <label class="block">
-        <span class="label-mono">EDIT PASSWORD</span>
+        <span class="label-mono">編輯密碼</span>
         <input type="password" name="edit_password" required minlength="6" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
       </label>
       <label class="block">
-        <span class="label-mono">TUNE NAME</span>
+        <span class="label-mono">調校名稱</span>
         <input name="name" value={tune.name} class="mt-1.5 w-full bg-bg border border-line text-text p-2" />
       </label>
       <label class="block">
-        <span class="label-mono">DESCRIPTION</span>
+        <span class="label-mono">說明</span>
         <textarea name="description" rows="5" class="mt-1.5 w-full bg-bg border border-line text-text p-2.5">{tune.description ?? ''}</textarea>
       </label>
       <label class="block">
-        <span class="label-mono">TUNE VALUES (JSON)</span>
+        <span class="label-mono">調校數值 (JSON)</span>
         <textarea name="tune_values" rows="20" class="mt-1.5 w-full bg-bg border border-line text-text font-mono text-[11px] p-2">{JSON.stringify(values, null, 2)}</textarea>
       </label>
       <div class="flex gap-2.5 justify-end">
-        <button type="submit" class="bg-cyan text-bg px-5 py-2.5 font-mono font-bold border-0">SAVE</button>
-        <button type="button" id="delete-btn" class="bg-transparent border border-pink text-pink px-5 py-2.5 font-mono">DELETE TUNE</button>
+        <button type="submit" class="bg-cyan text-bg px-5 py-2.5 font-mono font-bold border-0">儲存</button>
+        <button type="button" id="delete-btn" class="bg-transparent border border-pink text-pink px-5 py-2.5 font-mono">刪除調校</button>
       </div>
       <div id="edit-status" class="text-text-dim text-[12px]"></div>
     </form>
@@ -54,10 +54,10 @@ const values = JSON.parse(tune.tune_values);
       };
       const res = await fetch(`/api/tunes/${slug}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const data = await res.json();
-      status.textContent = res.ok ? 'Saved.' : `Error: ${data.error || 'unknown'}`;
+      status.textContent = res.ok ? '已儲存。' : `錯誤：${data.error || 'unknown'}`;
     });
     document.getElementById('delete-btn').addEventListener('click', async () => {
-      if (!confirm('Delete this tune?')) return;
+      if (!confirm('確定要刪除這筆調校？')) return;
       const fd = new FormData(form);
       const res = await fetch(`/api/tunes/${slug}`, {
         method: 'DELETE',
@@ -65,7 +65,7 @@ const values = JSON.parse(tune.tune_values);
         body: JSON.stringify({ edit_password: fd.get('edit_password') })
       });
       if (res.ok) location.href = '/';
-      else status.textContent = 'Delete failed.';
+      else status.textContent = '刪除失敗。';
     });
   </script>
 </Base>

@@ -1,10 +1,10 @@
 {
-  "nav.browse": "Browse",
-  "nav.upload": "Upload",
-  "nav.tuners": "Top Tuners",
-  "nav.tracks": "Tracks",
-  "nav.news": "News",
-  "search.placeholder": "Search car, track, tuner...",
-  "cta.upload": "+ Upload tune",
-  "footer.disclaimer": "Not affiliated with Microsoft / Playground Games"
+  "nav.browse": "瀏覽",
+  "nav.upload": "上傳",
+  "nav.tuners": "熱門調校師",
+  "nav.tracks": "賽道",
+  "nav.news": "消息",
+  "search.placeholder": "搜尋車輛、賽道、調校師…",
+  "cta.upload": "+ 上傳調校",
+  "footer.disclaimer": "本站與 Microsoft / Playground Games 無關"
 }
