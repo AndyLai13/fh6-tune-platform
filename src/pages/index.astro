@@ -1,0 +1,70 @@
+---
+import Base from '~/layouts/Base.astro';
+import TuneCard from '~/components/TuneCard.astro';
+import { listTunes } from '~/lib/db';
+
+export const prerender = false;
+const env = Astro.locals.runtime.env;
+
+const featuredResult = await listTunes(env.DB, { sort: 'rating', limit: 3 });
+const trendingResult = await listTunes(env.DB, { sort: 'downloads', limit: 5 });
+const featured = (featuredResult.results ?? []) as Array<any>;
+const trending = (trendingResult.results ?? []) as Array<any>;
+
+const statsRow = await env.DB.prepare("SELECT COUNT(*) AS tunes, COUNT(DISTINCT author_handle) AS tuners, COUNT(DISTINCT car_id) AS cars FROM tunes WHERE status='public'").first<{ tunes: number; tuners: number; cars: number }>();
+---
+
+<Base title="touge.gg" description="The tune database for Forza Horizon 6.">
+  <section class="px-6 py-12 max-w-6xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-3.5">＞ FORZA HORIZON 6 / JAPAN</div>
+    <h1 class="text-[56px] font-extrabold leading-[1.05] mb-4">
+      The tune database<br/>
+      <span class="bg-gradient-to-r from-cyan to-pink bg-clip-text text-transparent">for serious drivers.</span>
+    </h1>
+    <p class="text-[16px] text-text-mute max-w-[560px] leading-relaxed">{statsRow?.tunes ?? 0} tunes across every car in FH6. Drift the touge. Grip the circuit. Find what works, share what you built.</p>
+  </section>
+
+  <section class="border-y border-line px-6 py-5 bg-bg-soft">
+    <div class="max-w-6xl mx-auto grid grid-cols-4 gap-8">
+      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">TUNES</div><div class="text-[24px] font-bold">{statsRow?.tunes ?? 0}</div></div>
+      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">TUNERS</div><div class="text-[24px] font-bold">{statsRow?.tuners ?? 0}</div></div>
+      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">CARS COVERED</div><div class="text-[24px] font-bold">{statsRow?.cars ?? 0}</div></div>
+      <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">UPDATED</div><div class="text-[24px] font-bold text-cyan">just now</div></div>
+    </div>
+  </section>
+
+  <section class="px-6 py-12 max-w-6xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ FEATURED THIS WEEK</div>
+    <h2 class="text-[26px] font-bold mb-6">Editors' picks</h2>
+    <div class="grid grid-cols-3 gap-4">
+      {featured.map((r: any, i: number) => (
+        <TuneCard
+          slug={r.slug} name={r.name} shareCode={r.share_code}
+          carYear={r.car_year} carMake={r.car_make} carModel={r.car_model}
+          piClass={r.pi_class} tuneType={r.tune_type} drivetrain={r.drivetrain}
+          rating={r.rating_count > 0 ? r.rating_sum / r.rating_count : 0}
+          downloads={r.download_count} authorHandle={r.author_handle}
+          accent={i === 1 ? 'pink' : 'cyan'} />
+      ))}
+    </div>
+  </section>
+
+  <section class="px-6 pb-12 max-w-6xl mx-auto">
+    <div class="font-mono text-[11px] text-cyan tracking-wider3 mb-2">＞ TRENDING NOW</div>
+    <h2 class="text-[22px] font-bold mb-4">Most downloaded this week</h2>
+    <div class="space-y-px bg-line">
+      {trending.map((r: any, i: number) => (
+        <a href={`/tune/${r.slug}`} class="bg-bg-card p-4 grid grid-cols-[30px_1fr_90px_60px_70px] gap-4 items-center text-[13px] no-underline">
+          <div class="font-mono text-pink font-bold">{String(i + 1).padStart(2, '0')}</div>
+          <div>
+            <div class="font-semibold text-text">{r.name} <span class="text-text-dim font-normal text-[12px]">— {r.car_year} {r.car_make} {r.car_model}</span></div>
+            <div class="font-mono text-[10px] text-text-dim mt-0.5">by @{r.author_handle}</div>
+          </div>
+          <div class="font-mono text-[11px] text-text-dim">{r.tune_type.toUpperCase()} · {r.pi_class}</div>
+          <div class="font-mono text-[11px] text-cyan">★ {r.rating_count > 0 ? (r.rating_sum / r.rating_count).toFixed(1) : '—'}</div>
+          <div class="font-mono text-[11px] text-text text-right">↓ {r.download_count.toLocaleString()}</div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
