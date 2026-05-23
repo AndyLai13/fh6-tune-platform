@@ -1,0 +1,15 @@
+name = "fh6-tune-platform"
+compatibility_date = "2026-05-01"
+pages_build_output_dir = "./dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fh6-tune-platform-local"
+database_id = "local-development-placeholder"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "local-development-placeholder"
+
+[vars]
+# Production secrets set via `wrangler secret put` per env
