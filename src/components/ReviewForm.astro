@@ -1,0 +1,110 @@
+---
+type Props = { tuneSlug: string };
+const { tuneSlug } = Astro.props;
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA';
+---
+<form data-review-form data-tune-slug={tuneSlug} class="bg-bg-card border-l-[3px] border-cyan p-5 space-y-4">
+  <div class="font-mono text-[11px] text-cyan tracking-wider3">＞ 留下評論</div>
+
+  <div>
+    <span class="label-mono">評分</span>
+    <div class="mt-2 flex gap-1.5" data-rating-group>
+      {[1,2,3,4,5].map((n) => (
+        <button type="button" data-rating={n}
+          class="bg-transparent border border-line text-text-mute px-4 py-2 font-mono text-[14px] font-bold">
+          ★ {n}
+        </button>
+      ))}
+      <input type="hidden" name="rating" value="0" />
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3.5">
+    <label class="block">
+      <span class="label-mono">顯示名稱（選填）</span>
+      <input name="author_handle" maxlength="40" placeholder="anonymous"
+        class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
+    </label>
+  </div>
+
+  <label class="block">
+    <span class="label-mono">評論內容（選填）</span>
+    <textarea name="body" rows="3" maxlength="1000"
+      class="mt-1.5 w-full bg-bg border border-line text-text p-2.5"></textarea>
+  </label>
+
+  <input type="text" name="honeypot" tabindex="-1" autocomplete="off" class="hidden" />
+  <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+
+  <div class="flex justify-end gap-2.5 items-center">
+    <span data-review-status class="text-text-dim text-[12px]"></span>
+    <button type="submit" data-review-submit
+      class="bg-cyan border-0 text-bg px-5 py-2.5 font-mono font-bold uppercase tracking-wider2">
+      送出評論
+    </button>
+  </div>
+</form>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-review-form]').forEach((form) => {
+    const slug = form.dataset.tuneSlug!;
+    const status = form.querySelector<HTMLElement>('[data-review-status]')!;
+    const ratingInput = form.querySelector<HTMLInputElement>('input[name="rating"]')!;
+
+    form.querySelectorAll<HTMLButtonElement>('[data-rating]').forEach((b) => {
+      b.addEventListener('click', () => {
+        form.querySelectorAll<HTMLButtonElement>('[data-rating]').forEach((x) => {
+          x.classList.remove('bg-cyan','text-bg','border-cyan');
+          x.classList.add('border-line','text-text-mute');
+        });
+        b.classList.remove('border-line','text-text-mute');
+        b.classList.add('bg-cyan','text-bg','border-cyan');
+        ratingInput.value = b.dataset.rating!;
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const rating = Number(ratingInput.value);
+      if (!rating) { status.textContent = '請選擇評分'; return; }
+      status.textContent = '送出中…';
+
+      // Wait up to 4s for the Turnstile widget to populate its token
+      const getTurnstileToken = (): Promise<string> => new Promise((resolve) => {
+        let tries = 0;
+        const poll = () => {
+          const val = (form.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null)?.value ?? '';
+          if (val || tries >= 40) { resolve(val); return; }
+          tries++;
+          setTimeout(poll, 100);
+        };
+        poll();
+      });
+      const turnstile_token = await getTurnstileToken();
+
+      const fd = new FormData(form);
+      const body = {
+        author_handle: fd.get('author_handle'),
+        rating,
+        body: fd.get('body'),
+        turnstile_token,
+        honeypot: fd.get('honeypot')
+      };
+      const res = await fetch(`/api/tunes/${slug}/review`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      });
+      if (res.ok) {
+        status.textContent = '已送出，重新整理頁面可看到您的評論。';
+        form.reset();
+        form.querySelectorAll<HTMLButtonElement>('[data-rating]').forEach((x) => {
+          x.classList.remove('bg-cyan','text-bg','border-cyan');
+          x.classList.add('border-line','text-text-mute');
+        });
+        ratingInput.value = '0';
+      } else {
+        const data = await res.json().catch(() => ({}));
+        status.textContent = `錯誤：${data.error ?? res.status}`;
+      }
+    });
+  });
+</script>
