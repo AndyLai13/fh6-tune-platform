@@ -13,12 +13,15 @@ const { code, tuneId, tuneSlug } = Astro.props;
   document.querySelectorAll<HTMLElement>('[data-share-box]').forEach((box) => {
     const btn = box.querySelector<HTMLButtonElement>('[data-copy-btn]');
     const codeEl = box.querySelector<HTMLElement>('[data-code]');
+    const slug = box.dataset.tuneSlug;
     btn?.addEventListener('click', async () => {
       if (!codeEl) return;
       await navigator.clipboard.writeText(codeEl.innerText.trim());
       const original = btn.innerText;
       btn.innerText = '✓ 已複製';
       setTimeout(() => { btn.innerText = original; }, 1500);
+      // fire-and-forget — don't block UX on counter increment
+      fetch(`/api/tunes/${slug}/download`, { method: 'POST' }).catch(() => {});
     });
   });
 </script>
