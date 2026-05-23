@@ -1,0 +1,62 @@
+---
+import Base from '~/layouts/Base.astro';
+import TuneCard from '~/components/TuneCard.astro';
+import FilterSidebar from '~/components/FilterSidebar.astro';
+import { listTunes } from '~/lib/db';
+
+export const prerender = false;
+
+const q = Astro.url.searchParams;
+const env = Astro.locals.runtime.env;
+const limit = 24;
+const offset = q.get('page') ? (Number(q.get('page')) - 1) * limit : 0;
+
+const result = await listTunes(env.DB, {
+  carSlug: q.get('car') ?? undefined,
+  tuneType: q.get('type') ?? undefined,
+  piClass: q.get('pi') ?? undefined,
+  drivetrain: q.get('drivetrain') ?? undefined,
+  minRating: q.get('min_rating') ? Number(q.get('min_rating')) : undefined,
+  sort: (q.get('sort') as 'downloads'|'rating'|'newest'|'reviews') ?? 'downloads',
+  limit, offset
+});
+const rows = (result.results ?? []) as Array<any>;
+
+const counts: { pi: Record<string, number>; type: Record<string, number> } = { pi: {}, type: {} };
+const piRowsResult = await env.DB.prepare("SELECT pi_class, COUNT(*) AS n FROM tunes WHERE status = 'public' GROUP BY pi_class").all();
+const typeRowsResult = await env.DB.prepare("SELECT tune_type, COUNT(*) AS n FROM tunes WHERE status = 'public' GROUP BY tune_type").all();
+(piRowsResult.results as Array<{ pi_class: string; n: number }>).forEach((r) => { counts.pi[r.pi_class] = r.n; });
+(typeRowsResult.results as Array<{ tune_type: string; n: number }>).forEach((r) => { counts.type[r.tune_type] = r.n; });
+---
+
+<Base title="Browse tunes">
+  <section class="px-6 pt-8 max-w-7xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ BROWSE TUNES</div>
+    <h1 class="text-[32px] font-extrabold mb-1">{rows.length} tunes</h1>
+  </section>
+  <section class="px-6 py-6 max-w-7xl mx-auto grid grid-cols-[240px_1fr] gap-7">
+    <FilterSidebar
+      active={{ car: q.get('car') ?? undefined, type: q.get('type') ?? undefined, pi: q.get('pi') ?? undefined, drivetrain: q.get('drivetrain') ?? undefined }}
+      counts={counts} />
+    <div>
+      <div class="grid grid-cols-3 gap-3.5">
+        {rows.map((r: any, i: number) => (
+          <TuneCard
+            slug={r.slug}
+            name={r.name}
+            shareCode={r.share_code}
+            carYear={r.car_year}
+            carMake={r.car_make}
+            carModel={r.car_model}
+            piClass={r.pi_class}
+            tuneType={r.tune_type}
+            drivetrain={r.drivetrain}
+            rating={r.rating_count > 0 ? r.rating_sum / r.rating_count : 0}
+            downloads={r.download_count}
+            authorHandle={r.author_handle}
+            accent={i % 3 === 1 ? 'pink' : 'cyan'} />
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

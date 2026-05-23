@@ -1,0 +1,21 @@
+---
+import en from '~/i18n/en.json';
+const t = en;
+const activePath = Astro.url.pathname;
+const isActive = (p: string) => activePath === p || activePath.startsWith(p + '/');
+---
+
+<header class="border-b border-line px-6 py-4 flex items-center justify-between bg-bg-soft">
+  <div class="flex items-center gap-8">
+    <a href="/" class="font-mono font-bold text-[15px] text-cyan tracking-wider2 no-underline">
+      TOUGE<span class="text-pink">.</span>GG
+    </a>
+    <nav class="flex gap-5 text-[13px] font-medium">
+      <a href="/browse" class:list={[isActive('/browse') ? 'text-text border-b-2 border-cyan pb-1' : 'text-text-mute']}>{t['nav.browse']}</a>
+      <a href="/upload" class:list={[isActive('/upload') ? 'text-text border-b-2 border-cyan pb-1' : 'text-text-mute']}>{t['nav.upload']}</a>
+    </nav>
+  </div>
+  <div class="flex gap-3 items-center">
+    <a href="/upload" class="bg-cyan text-bg px-3.5 py-1.5 text-[12px] font-bold font-mono uppercase tracking-wider2 no-underline">{t['cta.upload']}</a>
+  </div>
+</header>

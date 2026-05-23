@@ -1,0 +1,59 @@
+---
+type Counts = Record<string, number>;
+type Props = {
+  active: { car?: string; type?: string; pi?: string; drivetrain?: string; minRating?: number };
+  counts: { pi: Counts; type: Counts };
+};
+const { active, counts } = Astro.props;
+
+const piClasses: Array<[string, string]> = [['D','500'],['C','600'],['B','700'],['A','800'],['S1','900'],['S2','998']];
+const types = ['touge','drift','grip','drag','rally','offroad'] as const;
+
+function toggleParam(name: string, value: string): string {
+  const u = new URL(Astro.url);
+  if (u.searchParams.get(name) === value) u.searchParams.delete(name);
+  else u.searchParams.set(name, value);
+  return u.pathname + '?' + u.searchParams.toString();
+}
+---
+<aside class="space-y-5">
+  <div>
+    <div class="font-mono text-[10px] text-cyan tracking-wider2 mb-2">PI CLASS</div>
+    <ul class="space-y-2 font-mono text-[12px]">
+      {piClasses.map(([k, score]) => (
+        <li>
+          <a href={toggleParam('pi', k)}
+             class:list={['flex justify-between no-underline', active.pi === k ? 'text-text' : 'text-text-mute']}>
+            <span>{active.pi === k ? '✓ ' : ''}{k} {score}</span>
+            <span class="text-text-dim">{counts.pi[k] ?? 0}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="pt-4 border-t border-line">
+    <div class="font-mono text-[10px] text-text tracking-wider2 mb-2">TUNE TYPE</div>
+    <ul class="space-y-2 font-mono text-[12px]">
+      {types.map((t) => (
+        <li>
+          <a href={toggleParam('type', t)}
+             class:list={['flex justify-between no-underline', active.type === t ? 'text-text' : 'text-text-mute']}>
+            <span>{active.type === t ? '✓ ' : ''}{t.toUpperCase()}</span>
+            <span class="text-text-dim">{counts.type[t] ?? 0}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="pt-4 border-t border-line">
+    <div class="font-mono text-[10px] text-text tracking-wider2 mb-2">DRIVETRAIN</div>
+    <div class="grid grid-cols-3 gap-1 font-mono text-[11px]">
+      {(['RWD','AWD','FWD'] as const).map((d) => (
+        <a href={toggleParam('drivetrain', d)}
+           class:list={['py-1.5 text-center no-underline', active.drivetrain === d ? 'bg-cyan text-bg font-bold' : 'border border-line text-text-mute']}>{d}</a>
+      ))}
+    </div>
+  </div>
+</aside>
