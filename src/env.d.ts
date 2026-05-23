@@ -5,21 +5,16 @@ type D1Database = import('@cloudflare/workers-types').D1Database;
 type KVNamespace = import('@cloudflare/workers-types').KVNamespace;
 
 interface ImportMetaEnv {
-  readonly TURNSTILE_SECRET_KEY: string;
-  readonly IP_HASH_SALT: string;
-  readonly EDIT_COOKIE_SECRET: string;
+  readonly PUBLIC_TURNSTILE_SITE_KEY: string;
 }
 
-declare namespace App {
-  interface Locals {
-    runtime: {
-      env: {
-        DB: D1Database;
-        KV: KVNamespace;
-        TURNSTILE_SECRET_KEY: string;
-        IP_HASH_SALT: string;
-        EDIT_COOKIE_SECRET: string;
-      };
-    };
+declare module 'cloudflare:workers' {
+  interface Env {
+    DB: D1Database;
+    KV: KVNamespace;
+    TURNSTILE_SECRET_KEY: string;
+    IP_HASH_SALT: string;
+    EDIT_COOKIE_SECRET: string;
   }
+  export const env: Env;
 }

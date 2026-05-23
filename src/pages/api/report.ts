@@ -3,11 +3,11 @@ import { verifyTurnstile } from '~/lib/turnstile';
 import { hashIp, dailySalt } from '~/lib/ip-hash';
 import { checkRateLimit } from '~/lib/rate-limit';
 import { insertReport } from '~/lib/db';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
-  const env = locals.runtime.env;
+export const POST: APIRoute = async ({ request, clientAddress }) => {
   const body = await request.json() as {
     target_kind?: 'tune' | 'review';
     target_id?: number;

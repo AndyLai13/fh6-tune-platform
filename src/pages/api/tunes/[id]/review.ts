@@ -3,11 +3,11 @@ import { verifyTurnstile } from '~/lib/turnstile';
 import { hashIp, dailySalt } from '~/lib/ip-hash';
 import { checkRateLimit } from '~/lib/rate-limit';
 import { getTuneBySlug, insertReview } from '~/lib/db';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ params, request, locals, clientAddress }) => {
-  const env = locals.runtime.env;
+export const POST: APIRoute = async ({ params, request, clientAddress }) => {
   const tune = await getTuneBySlug(env.DB, params.id!);
   if (!tune) return new Response('not_found', { status: 404 });
 

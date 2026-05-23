@@ -1,7 +1,7 @@
 ---
 import Base from '~/layouts/Base.astro';
 import { sampleTuneValues } from '~/lib/tune-values';
-const env = Astro.locals.runtime.env;
+import { env } from 'cloudflare:workers';
 const carsResult = await env.DB.prepare('SELECT id, year, make, model, slug FROM cars ORDER BY make, model').all();
 const tracksResult = await env.DB.prepare('SELECT id, name FROM tracks ORDER BY name').all();
 const cars = (carsResult.results ?? []) as Array<{ id: number; year: number; make: string; model: string }>;

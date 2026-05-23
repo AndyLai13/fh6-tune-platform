@@ -3,11 +3,11 @@ import Base from '~/layouts/Base.astro';
 import TuneCard from '~/components/TuneCard.astro';
 import FilterSidebar from '~/components/FilterSidebar.astro';
 import { listTunes } from '~/lib/db';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
 const q = Astro.url.searchParams;
-const env = Astro.locals.runtime.env;
 const limit = 24;
 const offset = q.get('page') ? (Number(q.get('page')) - 1) * limit : 0;
 

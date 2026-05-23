@@ -6,6 +6,7 @@ import { makeTuneSlug } from '~/lib/slug';
 import { validateTuneValues } from '~/lib/tune-values';
 import { checkRateLimit } from '~/lib/rate-limit';
 import { getCarById, insertTune, attachTracks, listTunes } from '~/lib/db';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
@@ -28,8 +29,7 @@ type UploadBody = {
   honeypot?: string;
 };
 
-export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
-  const env = locals.runtime.env;
+export const POST: APIRoute = async ({ request, clientAddress }) => {
   let body: UploadBody;
   try {
     body = await request.json();
@@ -91,9 +91,9 @@ export const POST: APIRoute = async ({ request, locals, clientAddress }) => {
   return Response.json({ slug, edit_url: `/edit/${slug}` }, { status: 201 });
 };
 
-export const GET: APIRoute = async ({ url, locals }) => {
+export const GET: APIRoute = async ({ url }) => {
   const q = url.searchParams;
-  const result = await listTunes(locals.runtime.env.DB, {
+  const result = await listTunes(env.DB, {
     carSlug: q.get('car') ?? undefined,
     tuneType: q.get('type') ?? undefined,
     piClass: q.get('pi') ?? undefined,

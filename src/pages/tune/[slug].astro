@@ -3,11 +3,11 @@ import Base from '~/layouts/Base.astro';
 import ShareCodeBox from '~/components/ShareCodeBox.astro';
 import TuneValuesGrid from '~/components/TuneValuesGrid.astro';
 import { getTuneBySlug, getCarById, listReviews } from '~/lib/db';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
 const slug = Astro.params.slug!;
-const env = Astro.locals.runtime.env;
 const tune = await getTuneBySlug(env.DB, slug);
 if (!tune) return Astro.redirect('/404');
 const car = await getCarById(env.DB, tune.car_id);

@@ -1,9 +1,9 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ locals, url }) => {
-  const env = locals.runtime.env;
+export const GET: APIRoute = async ({ url }) => {
   const base = `${url.protocol}//${url.host}`;
   const tunesResult = await env.DB.prepare("SELECT slug, updated_at FROM tunes WHERE status='public' ORDER BY updated_at DESC LIMIT 50000").all();
   const carsResult = await env.DB.prepare('SELECT slug FROM cars').all();

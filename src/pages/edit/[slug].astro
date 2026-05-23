@@ -1,9 +1,9 @@
 ---
 import Base from '~/layouts/Base.astro';
 import { getTuneForEdit } from '~/lib/db';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
-const env = Astro.locals.runtime.env;
 const slug = Astro.params.slug!;
 const tune = await getTuneForEdit(env.DB, slug);
 if (!tune) return Astro.redirect('/404');

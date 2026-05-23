@@ -2,18 +2,18 @@ import type { APIRoute } from 'astro';
 import { getTuneBySlug, getTuneForEdit } from '~/lib/db';
 import { verifyEditPassword, verifyEditCookie, signEditCookie } from '~/lib/auth';
 import { validateTuneValues } from '~/lib/tune-values';
+import { env } from 'cloudflare:workers';
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ params, locals }) => {
-  const tune = await getTuneBySlug(locals.runtime.env.DB, params.id!);
+export const GET: APIRoute = async ({ params }) => {
+  const tune = await getTuneBySlug(env.DB, params.id!);
   if (!tune) return new Response('not_found', { status: 404 });
   const { edit_password_hash: _p, ip_hash: _i, tune_values, ...rest } = tune;
   return Response.json({ ...rest, tune_values: JSON.parse(tune_values) });
 };
 
-export const PATCH: APIRoute = async ({ params, request, locals, cookies }) => {
-  const env = locals.runtime.env;
+export const PATCH: APIRoute = async ({ params, request, cookies }) => {
   const slug = params.id!;
   const tune = await getTuneForEdit(env.DB, slug);
   if (!tune) return new Response('not_found', { status: 404 });
@@ -53,8 +53,7 @@ export const PATCH: APIRoute = async ({ params, request, locals, cookies }) => {
   return Response.json({ updated: true });
 };
 
-export const DELETE: APIRoute = async ({ params, request, locals, cookies }) => {
-  const env = locals.runtime.env;
+export const DELETE: APIRoute = async ({ params, request, cookies }) => {
   const slug = params.id!;
   const tune = await getTuneForEdit(env.DB, slug);
   if (!tune) return new Response('not_found', { status: 404 });
