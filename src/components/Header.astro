@@ -16,6 +16,10 @@ const isActive = (p: string) => activePath === p || activePath.startsWith(p + '/
     </nav>
   </div>
   <div class="flex gap-3 items-center">
+    <form action="/browse" method="get" class="hidden md:block">
+      <input type="search" name="q" data-search-input placeholder={t['search.placeholder']}
+        class="bg-bg border border-line text-text px-3 py-1.5 text-[12px] font-mono w-[220px]" />
+    </form>
     <a href="/upload" class="bg-cyan text-bg px-3.5 py-1.5 text-[12px] font-bold font-mono uppercase tracking-wider2 no-underline">{t['cta.upload']}</a>
   </div>
 </header>
