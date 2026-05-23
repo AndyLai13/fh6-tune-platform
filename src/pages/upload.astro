@@ -1,0 +1,170 @@
+---
+import Base from '~/layouts/Base.astro';
+import { sampleTuneValues } from '~/lib/tune-values';
+const env = Astro.locals.runtime.env;
+const carsResult = await env.DB.prepare('SELECT id, year, make, model, slug FROM cars ORDER BY make, model').all();
+const tracksResult = await env.DB.prepare('SELECT id, name FROM tracks ORDER BY name').all();
+const cars = (carsResult.results ?? []) as Array<{ id: number; year: number; make: string; model: string }>;
+const tracks = (tracksResult.results ?? []) as Array<{ id: number; name: string }>;
+const sample = sampleTuneValues();
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x00000000000000000000AA';
+---
+
+<Base title="Upload a tune">
+  <section class="px-6 py-8 max-w-5xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ NEW TUNE</div>
+    <h1 class="text-[30px] font-extrabold mb-6">Upload a tune</h1>
+
+    <form id="upload-form" class="space-y-5">
+      <fieldset class="bg-bg-card border-l-[3px] border-cyan p-5">
+        <legend class="font-mono text-[11px] text-cyan tracking-wider3">01 ＞ THE BASICS</legend>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <label class="block">
+            <span class="label-mono">TUNE NAME</span>
+            <input name="name" required maxlength="120" class="mt-1.5 w-full bg-bg border border-line text-text p-2.5" />
+          </label>
+          <label class="block">
+            <span class="label-mono">FH6 SHARE CODE</span>
+            <input name="share_code" required maxlength="32" class="mt-1.5 w-full bg-bg border border-cyan text-text p-2.5 font-mono text-[16px] font-bold tracking-wide" />
+          </label>
+          <label class="col-span-2 block">
+            <span class="label-mono">CAR</span>
+            <select name="car_id" required class="mt-1.5 w-full bg-bg border border-line text-text p-2.5">
+              {cars.map((c: any) => <option value={c.id}>{c.year} {c.make} {c.model}</option>)}
+            </select>
+          </label>
+          <fieldset class="col-span-2">
+            <span class="label-mono">TUNE TYPE</span>
+            <div class="mt-2 flex gap-1.5 flex-wrap" data-type-group>
+              {['touge','drift','grip','drag','rally','offroad'].map((t) => (
+                <button type="button" data-type={t} class="bg-transparent border border-line text-text-mute px-4 py-2 font-mono text-[11px] uppercase tracking-wider2">{t}</button>
+              ))}
+              <input type="hidden" name="tune_type" value="touge" />
+            </div>
+          </fieldset>
+        </div>
+      </fieldset>
+
+      <fieldset class="bg-bg-card border border-line p-5">
+        <legend class="font-mono text-[11px] text-text tracking-wider3">02 ＞ BUILD INFO</legend>
+        <div class="grid grid-cols-4 gap-3.5 mt-4">
+          <label class="block">
+            <span class="label-mono">PI CLASS</span>
+            <select name="pi_class" class="mt-1.5 w-full bg-bg border border-line text-text p-2">
+              {['D','C','B','A','S1','S2','X'].map((p) => <option>{p}</option>)}
+            </select>
+          </label>
+          <label class="block">
+            <span class="label-mono">PI SCORE</span>
+            <input type="number" name="pi_score" min="100" max="999" value="800" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
+          </label>
+          <label class="block">
+            <span class="label-mono">DRIVETRAIN</span>
+            <select name="drivetrain" class="mt-1.5 w-full bg-bg border border-line text-text p-2">
+              <option>RWD</option><option>AWD</option><option>FWD</option>
+            </select>
+          </label>
+          <label class="block">
+            <span class="label-mono">POWER (HP)</span>
+            <input type="number" name="power_hp" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="bg-bg-card border border-line p-5">
+        <legend class="font-mono text-[11px] text-text tracking-wider3">03 ＞ TUNE VALUES (paste numbers from FH6)</legend>
+        <p class="text-text-dim text-[12px] mt-2">MVP shortcut: paste tune values as JSON. Per-field inputs will be added in v1.1.</p>
+        <textarea name="_tune_values_json" rows="10" class="mt-2 w-full bg-bg border border-line text-text font-mono text-[11px] p-2">{JSON.stringify(sample, null, 2)}</textarea>
+      </fieldset>
+
+      <fieldset class="bg-bg-card border border-line p-5">
+        <legend class="font-mono text-[11px] text-text tracking-wider3">04 ＞ DESCRIPTION & TRACKS</legend>
+        <label class="block mt-3">
+          <span class="label-mono">TUNER NOTES</span>
+          <textarea name="description" rows="4" maxlength="4000" class="mt-1.5 w-full bg-bg border border-line text-text p-2.5"></textarea>
+        </label>
+        <label class="block mt-3">
+          <span class="label-mono">RECOMMENDED TRACKS</span>
+          <select name="track_ids" multiple size="5" class="mt-1.5 w-full bg-bg border border-line text-text p-2">
+            {tracks.map((t: any) => <option value={t.id}>{t.name}</option>)}
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset class="bg-bg-card border border-line p-5">
+        <legend class="font-mono text-[11px] text-text tracking-wider3">05 ＞ AUTHOR</legend>
+        <div class="grid grid-cols-2 gap-3.5 mt-3.5">
+          <label class="block">
+            <span class="label-mono">DISPLAY NAME</span>
+            <input name="author_handle" maxlength="40" placeholder="your_handle" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
+          </label>
+          <label class="block">
+            <span class="label-mono">EDIT PASSWORD</span>
+            <input name="edit_password" type="password" required minlength="6" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
+          </label>
+        </div>
+      </fieldset>
+
+      <input type="text" name="honeypot" tabindex="-1" autocomplete="off" class="hidden" />
+
+      <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+
+      <div class="flex justify-end gap-2.5">
+        <button type="submit" class="bg-cyan border-0 text-bg px-6 py-3 font-mono font-bold uppercase tracking-wider2">PUBLISH TUNE →</button>
+      </div>
+      <div id="upload-status" class="text-text-dim text-[12px]"></div>
+    </form>
+  </section>
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script>
+    const form = document.getElementById('upload-form') as HTMLFormElement;
+    const status = document.getElementById('upload-status') as HTMLElement;
+
+    document.querySelectorAll<HTMLButtonElement>('[data-type-group] button').forEach((b) => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll<HTMLButtonElement>('[data-type-group] button').forEach((x) => {
+          x.classList.remove('bg-cyan','text-bg','font-bold','border-cyan');
+          x.classList.add('border-line','text-text-mute');
+        });
+        b.classList.remove('border-line','text-text-mute');
+        b.classList.add('bg-cyan','text-bg','font-bold','border-cyan');
+        (document.querySelector('input[name="tune_type"]') as HTMLInputElement).value = b.dataset.type!;
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = 'Uploading…';
+      const fd = new FormData(form);
+      const body = {
+        name: fd.get('name'),
+        share_code: fd.get('share_code'),
+        car_id: Number(fd.get('car_id')),
+        tune_type: fd.get('tune_type'),
+        pi_class: fd.get('pi_class'),
+        pi_score: Number(fd.get('pi_score')),
+        drivetrain: fd.get('drivetrain'),
+        power_hp: Number(fd.get('power_hp')) || undefined,
+        description: fd.get('description'),
+        tune_values: JSON.parse(String(fd.get('_tune_values_json'))),
+        author_handle: fd.get('author_handle'),
+        edit_password: fd.get('edit_password'),
+        track_ids: fd.getAll('track_ids').map(Number),
+        turnstile_token: (form.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement)?.value,
+        honeypot: fd.get('honeypot')
+      };
+
+      const res = await fetch('/api/tunes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const data = await res.json();
+      if (res.ok) {
+        const myTunes = JSON.parse(localStorage.getItem('mytunes') ?? '[]');
+        myTunes.push({ slug: data.slug, editUrl: data.edit_url, savedAt: Date.now() });
+        localStorage.setItem('mytunes', JSON.stringify(myTunes));
+        status.innerHTML = `Published. <a class="text-cyan" href="/tune/${data.slug}">View tune →</a><br/>Edit URL: <code>${data.edit_url}</code> — save this with your password.`;
+      } else {
+        status.textContent = `Error: ${data.error}${data.details ? ' — ' + JSON.stringify(data.details) : ''}`;
+      }
+    });
+  </script>
+</Base>
