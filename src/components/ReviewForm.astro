@@ -19,13 +19,11 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
     </div>
   </div>
 
-  <div class="grid grid-cols-2 gap-3.5">
-    <label class="block">
-      <span class="label-mono">顯示名稱（選填）</span>
-      <input name="author_handle" maxlength="40" placeholder="anonymous"
-        class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
-    </label>
-  </div>
+  <label class="block">
+    <span class="label-mono">顯示名稱（選填）</span>
+    <input name="author_handle" maxlength="40" placeholder="anonymous"
+      class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
+  </label>
 
   <label class="block">
     <span class="label-mono">評論內容（選填）</span>
@@ -51,12 +49,24 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
     const status = form.querySelector<HTMLElement>('[data-review-status]')!;
     const ratingInput = form.querySelector<HTMLInputElement>('input[name="rating"]')!;
 
+    const errorMessages: Record<string, string> = {
+      rate_limited: '評論太頻繁，請稍後再試',
+      turnstile_failed: '驗證失敗，請重新整理後再試',
+      invalid_rating: '評分必須在 1–5 之間',
+      spam: '送出失敗，請重新整理',
+    };
+
+    const clearRating = () => {
+      form.querySelectorAll<HTMLButtonElement>('[data-rating]').forEach((x) => {
+        x.classList.remove('bg-cyan','text-bg','border-cyan');
+        x.classList.add('border-line','text-text-mute');
+      });
+      ratingInput.value = '0';
+    };
+
     form.querySelectorAll<HTMLButtonElement>('[data-rating]').forEach((b) => {
       b.addEventListener('click', () => {
-        form.querySelectorAll<HTMLButtonElement>('[data-rating]').forEach((x) => {
-          x.classList.remove('bg-cyan','text-bg','border-cyan');
-          x.classList.add('border-line','text-text-mute');
-        });
+        clearRating();
         b.classList.remove('border-line','text-text-mute');
         b.classList.add('bg-cyan','text-bg','border-cyan');
         ratingInput.value = b.dataset.rating!;
@@ -74,13 +84,22 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
         let tries = 0;
         const poll = () => {
           const val = (form.querySelector('input[name="cf-turnstile-response"]') as HTMLInputElement | null)?.value ?? '';
-          if (val || tries >= 40) { resolve(val); return; }
+          if (val || tries >= 40) {
+            if (!val) {
+              status.textContent = '驗證元件未就緒，請重新整理後再試';
+              resolve('');
+              return;
+            }
+            resolve(val);
+            return;
+          }
           tries++;
           setTimeout(poll, 100);
         };
         poll();
       });
       const turnstile_token = await getTurnstileToken();
+      if (!turnstile_token) return;  // status already set by getTurnstileToken on timeout
 
       const fd = new FormData(form);
       const body = {
@@ -92,18 +111,18 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
       };
       const res = await fetch(`/api/tunes/${slug}/review`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
-      });
+      }).catch(() => null);
+      if (!res) {
+        status.textContent = '網路錯誤，請稍後再試';
+        return;
+      }
       if (res.ok) {
         status.textContent = '已送出，重新整理頁面可看到您的評論。';
         form.reset();
-        form.querySelectorAll<HTMLButtonElement>('[data-rating]').forEach((x) => {
-          x.classList.remove('bg-cyan','text-bg','border-cyan');
-          x.classList.add('border-line','text-text-mute');
-        });
-        ratingInput.value = '0';
+        clearRating();
       } else {
         const data = await res.json().catch(() => ({}));
-        status.textContent = `錯誤：${data.error ?? res.status}`;
+        status.textContent = errorMessages[data.error] ?? `錯誤：${data.error ?? res.status}`;
       }
     });
   });
