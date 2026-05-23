@@ -70,4 +70,19 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
       </div>
     )}
   </section>
+
+  <script is:inline type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: tune.name,
+    description: tune.description ?? `${car?.year} ${car?.make} ${car?.model} tune for FH6`,
+    datePublished: new Date(tune.created_at * 1000).toISOString(),
+    dateModified: new Date(tune.updated_at * 1000).toISOString(),
+    author: { '@type': 'Person', name: tune.author_handle },
+    aggregateRating: tune.rating_count > 0 ? {
+      '@type': 'AggregateRating',
+      ratingValue: (tune.rating_sum / tune.rating_count).toFixed(2),
+      reviewCount: tune.rating_count
+    } : undefined
+  })} />
 </Base>
