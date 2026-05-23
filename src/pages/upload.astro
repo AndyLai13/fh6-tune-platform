@@ -18,7 +18,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
     <form id="upload-form" class="space-y-5">
       <fieldset class="bg-bg-card border-l-[3px] border-cyan p-5">
         <legend class="font-mono text-[11px] text-cyan tracking-wider3">01 ＞ 基本資料</legend>
-        <div class="grid grid-cols-2 gap-4 mt-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <label class="block">
             <span class="label-mono">調校名稱</span>
             <input name="name" required maxlength="120" class="mt-1.5 w-full bg-bg border border-line text-text p-2.5" />
@@ -27,13 +27,13 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
             <span class="label-mono">FH6 分享碼</span>
             <input name="share_code" required maxlength="32" class="mt-1.5 w-full bg-bg border border-cyan text-text p-2.5 font-mono text-[16px] font-bold tracking-wide" />
           </label>
-          <label class="col-span-2 block">
+          <label class="md:col-span-2 block">
             <span class="label-mono">車輛</span>
             <select name="car_id" required class="mt-1.5 w-full bg-bg border border-line text-text p-2.5">
               {cars.map((c: any) => <option value={c.id}>{c.year} {c.make} {c.model}</option>)}
             </select>
           </label>
-          <fieldset class="col-span-2">
+          <fieldset class="md:col-span-2">
             <span class="label-mono">調校類型</span>
             <div class="mt-2 flex gap-1.5 flex-wrap" data-type-group>
               {['touge','drift','grip','drag','rally','offroad'].map((t) => (
@@ -47,7 +47,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
 
       <fieldset class="bg-bg-card border border-line p-5">
         <legend class="font-mono text-[11px] text-text tracking-wider3">02 ＞ 性能規格</legend>
-        <div class="grid grid-cols-4 gap-3.5 mt-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5 mt-4">
           <label class="block">
             <span class="label-mono">PI 等級</span>
             <select name="pi_class" class="mt-1.5 w-full bg-bg border border-line text-text p-2">
@@ -93,7 +93,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
 
       <fieldset class="bg-bg-card border border-line p-5">
         <legend class="font-mono text-[11px] text-text tracking-wider3">05 ＞ 作者</legend>
-        <div class="grid grid-cols-2 gap-3.5 mt-3.5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 mt-3.5">
           <label class="block">
             <span class="label-mono">顯示名稱</span>
             <input name="author_handle" maxlength="40" placeholder="your_handle" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />

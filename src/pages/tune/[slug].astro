@@ -23,10 +23,10 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
 
 <Base title={`${tune.name} — ${car?.year} ${car?.make} ${car?.model}`} description={tune.description?.slice(0, 160) ?? ''}>
   <section class="px-6 py-8 max-w-6xl mx-auto">
-    <div class="grid grid-cols-[2fr_1fr] gap-8 items-start">
+    <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 md:gap-8 items-start">
       <div>
         <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2.5">＞ {tune.tune_type.toUpperCase()} / {tune.pi_class} / {tune.drivetrain}</div>
-        <h1 class="text-[42px] font-extrabold mb-2 leading-tight">{tune.name}</h1>
+        <h1 class="text-[28px] md:text-[42px] font-extrabold mb-2 leading-tight">{tune.name}</h1>
         <div class="text-[18px] text-text-mute mb-5">{car?.year} {car?.make} {car?.model}</div>
         <div class="flex gap-5 items-center font-mono text-[12px]">
           <span class="text-text">@{tune.author_handle}</span>
@@ -58,7 +58,7 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
     {reviews.length === 0 ? (
       <p class="text-text-mute">目前還沒有評論，當第一位吧。</p>
     ) : (
-      <div class="grid grid-cols-2 gap-3.5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
         {reviews.map((r) => (
           <div class="bg-bg-card p-4 border-l-[2px] border-cyan">
             <div class="flex justify-between items-center mb-2.5">

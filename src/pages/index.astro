@@ -17,7 +17,7 @@ const statsRow = await env.DB.prepare("SELECT COUNT(*) AS tunes, COUNT(DISTINCT 
 <Base title="touge.gg" description="Forza Horizon 6 調校資料庫。">
   <section class="px-6 py-12 max-w-6xl mx-auto">
     <div class="font-mono text-[11px] text-pink tracking-wider3 mb-3.5">＞ FORZA HORIZON 6 / JAPAN</div>
-    <h1 class="text-[56px] font-extrabold leading-[1.05] mb-4">
+    <h1 class="text-[36px] md:text-[56px] font-extrabold leading-[1.05] mb-4">
       認真跑山的人<br/>
       <span class="bg-gradient-to-r from-cyan to-pink bg-clip-text text-transparent">都來這裡找調校。</span>
     </h1>
@@ -25,7 +25,7 @@ const statsRow = await env.DB.prepare("SELECT COUNT(*) AS tunes, COUNT(DISTINCT 
   </section>
 
   <section class="border-y border-line px-6 py-5 bg-bg-soft">
-    <div class="max-w-6xl mx-auto grid grid-cols-4 gap-8">
+    <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
       <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">調校總數</div><div class="text-[24px] font-bold">{statsRow?.tunes ?? 0}</div></div>
       <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">調校師</div><div class="text-[24px] font-bold">{statsRow?.tuners ?? 0}</div></div>
       <div><div class="font-mono text-[10px] text-text-dim tracking-wider2 mb-1">收錄車輛</div><div class="text-[24px] font-bold">{statsRow?.cars ?? 0}</div></div>
@@ -36,7 +36,7 @@ const statsRow = await env.DB.prepare("SELECT COUNT(*) AS tunes, COUNT(DISTINCT 
   <section class="px-6 py-12 max-w-6xl mx-auto">
     <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ 本週精選</div>
     <h2 class="text-[26px] font-bold mb-6">編輯精選</h2>
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
       {featured.map((r: any, i: number) => (
         <TuneCard
           slug={r.slug} name={r.name} shareCode={r.share_code}
@@ -54,7 +54,7 @@ const statsRow = await env.DB.prepare("SELECT COUNT(*) AS tunes, COUNT(DISTINCT 
     <h2 class="text-[22px] font-bold mb-4">本週下載最多</h2>
     <div class="space-y-px bg-line">
       {trending.map((r: any, i: number) => (
-        <a href={`/tune/${r.slug}`} class="bg-bg-card p-4 grid grid-cols-[30px_1fr_90px_60px_70px] gap-4 items-center text-[13px] no-underline">
+        <a href={`/tune/${r.slug}`} class="bg-bg-card p-4 grid grid-cols-[24px_1fr] md:grid-cols-[30px_1fr_90px_60px_70px] gap-3 md:gap-4 items-center text-[13px] no-underline">
           <div class="font-mono text-pink font-bold">{String(i + 1).padStart(2, '0')}</div>
           <div>
             <div class="font-semibold text-text">{r.name} <span class="text-text-dim font-normal text-[12px]">— {r.car_year} {r.car_make} {r.car_model}</span></div>

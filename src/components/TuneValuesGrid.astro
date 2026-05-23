@@ -3,7 +3,7 @@ import type { TuneValues } from '~/data/tune-schema';
 type Props = { values: TuneValues };
 const { values } = Astro.props;
 ---
-<div class="grid grid-cols-3 gap-px bg-line font-mono">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-px bg-line font-mono">
   <div class="bg-bg-card p-4">
     <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">輪胎</div>
     <div class="grid grid-cols-[1fr_auto_auto] gap-y-1.5 gap-x-3 text-[12px]">

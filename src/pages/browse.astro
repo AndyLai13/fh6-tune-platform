@@ -52,7 +52,7 @@ const typeRowsResult = await env.DB.prepare("SELECT tune_type, COUNT(*) AS n FRO
       {searchQuery ? `搜尋「${searchQuery}」` : `${rows.length} 筆調校`}
     </h1>
   </section>
-  <section class="px-6 py-6 max-w-7xl mx-auto grid grid-cols-[240px_1fr] gap-7">
+  <section class="px-6 py-6 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-[240px_1fr] gap-5 md:gap-7">
     <FilterSidebar
       active={{ car: q.get('car') ?? undefined, type: q.get('type') ?? undefined, pi: q.get('pi') ?? undefined, drivetrain: q.get('drivetrain') ?? undefined }}
       counts={counts} />
@@ -62,7 +62,7 @@ const typeRowsResult = await env.DB.prepare("SELECT tune_type, COUNT(*) AS n FRO
           {searchQuery ? `沒找到符合「${searchQuery}」的調校。` : '目前還沒有任何調校。'}
         </div>
       ) : (
-        <div class="grid grid-cols-3 gap-3.5">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
           {rows.map((r: any, i: number) => (
             <TuneCard
               slug={r.slug}
