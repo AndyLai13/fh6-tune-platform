@@ -9,7 +9,10 @@ export const prerender = false;
 
 const slug = Astro.params.slug!;
 const tune = await getTuneBySlug(env.DB, slug);
-if (!tune) return Astro.redirect('/404');
+if (!tune) {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
 const car = await getCarById(env.DB, tune.car_id);
 const reviewsResult = await listReviews(env.DB, tune.id, 20);
 const reviews = reviewsResult.results as Array<{ author_handle: string; rating: number; body: string | null; created_at: number }>;

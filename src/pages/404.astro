@@ -1,0 +1,18 @@
+---
+import Base from '~/layouts/Base.astro';
+---
+<Base title="404">
+  <section class="px-6 py-24 max-w-3xl mx-auto text-center">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-3">＞ DEAD END / 404</div>
+    <h1 class="text-[96px] font-extrabold leading-none mb-3">
+      <span class="bg-gradient-to-r from-cyan to-pink bg-clip-text text-transparent">404</span>
+    </h1>
+    <p class="text-[16px] text-text-mute mb-8">
+      路線跑掉了。這條 URL 對應的調校不存在，或是已經被刪了。
+    </p>
+    <div class="flex gap-3 justify-center">
+      <a href="/" class="bg-cyan text-bg px-5 py-2.5 font-mono font-bold uppercase tracking-wider2 no-underline">回首頁</a>
+      <a href="/browse" class="border border-line text-text px-5 py-2.5 font-mono font-bold uppercase tracking-wider2 no-underline">瀏覽調校</a>
+    </div>
+  </section>
+</Base>
