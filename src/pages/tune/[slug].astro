@@ -1,0 +1,73 @@
+---
+import Base from '~/layouts/Base.astro';
+import ShareCodeBox from '~/components/ShareCodeBox.astro';
+import TuneValuesGrid from '~/components/TuneValuesGrid.astro';
+import { getTuneBySlug, getCarById, listReviews } from '~/lib/db';
+
+export const prerender = false;
+
+const slug = Astro.params.slug!;
+const env = Astro.locals.runtime.env;
+const tune = await getTuneBySlug(env.DB, slug);
+if (!tune) return Astro.redirect('/404');
+const car = await getCarById(env.DB, tune.car_id);
+const reviewsResult = await listReviews(env.DB, tune.id, 20);
+const reviews = reviewsResult.results as Array<{ author_handle: string; rating: number; body: string | null; created_at: number }>;
+const values = JSON.parse(tune.tune_values);
+const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 0;
+---
+
+<Base title={`${tune.name} — ${car?.year} ${car?.make} ${car?.model}`} description={tune.description?.slice(0, 160) ?? ''}>
+  <section class="px-6 py-8 max-w-6xl mx-auto">
+    <div class="grid grid-cols-[2fr_1fr] gap-8 items-start">
+      <div>
+        <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2.5">＞ {tune.tune_type.toUpperCase()} / {tune.pi_class} / {tune.drivetrain}</div>
+        <h1 class="text-[42px] font-extrabold mb-2 leading-tight">{tune.name}</h1>
+        <div class="text-[18px] text-text-mute mb-5">{car?.year} {car?.make} {car?.model}</div>
+        <div class="flex gap-5 items-center font-mono text-[12px]">
+          <span class="text-text">@{tune.author_handle}</span>
+          <span class="text-text-dim">|</span>
+          <span class="text-cyan">★ {avgRating.toFixed(1)}</span>
+          <span class="text-text-dim">({tune.rating_count} reviews)</span>
+          <span class="text-text-dim">|</span>
+          <span class="text-text-dim">↓ <span class="text-text">{tune.download_count.toLocaleString()}</span> downloads</span>
+        </div>
+      </div>
+      <ShareCodeBox code={tune.share_code} tuneId={tune.id} tuneSlug={tune.slug} />
+    </div>
+
+    {tune.description && (
+      <div class="mt-6 p-5 bg-bg-card border-l-[3px] border-pink">
+        <div class="font-mono text-[10px] text-pink tracking-wider2 mb-1.5">＞ TUNER NOTES</div>
+        <p class="leading-relaxed text-text-soft text-[14px] m-0">{tune.description}</p>
+      </div>
+    )}
+  </section>
+
+  <section class="px-6 pb-12 max-w-6xl mx-auto">
+    <h2 class="text-[24px] font-bold mb-4">All values</h2>
+    <TuneValuesGrid values={values} />
+  </section>
+
+  <section class="px-6 pb-12 max-w-6xl mx-auto">
+    <h2 class="text-[20px] font-bold mb-4">Reviews · {tune.rating_count}</h2>
+    {reviews.length === 0 ? (
+      <p class="text-text-mute">No reviews yet. Be the first.</p>
+    ) : (
+      <div class="grid grid-cols-2 gap-3.5">
+        {reviews.map((r) => (
+          <div class="bg-bg-card p-4 border-l-[2px] border-cyan">
+            <div class="flex justify-between items-center mb-2.5">
+              <div class="font-mono text-[12px]">
+                <span class="text-text">@{r.author_handle}</span>
+                <span class="text-text-dim"> · {new Date(r.created_at * 1000).toISOString().slice(0,10)}</span>
+              </div>
+              <div class="text-cyan font-mono text-[12px]">★ {r.rating}</div>
+            </div>
+            {r.body && <p class="m-0 leading-relaxed text-text-soft text-[13px]">{r.body}</p>}
+          </div>
+        ))}
+      </div>
+    )}
+  </section>
+</Base>
