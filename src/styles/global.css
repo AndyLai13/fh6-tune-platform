@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  /* Color tokens — JDM Touge direction */
+  --color-bg: #0a0e14;
+  --color-bg-soft: #0d1218;
+  --color-bg-card: #131822;
+
+  --color-line: #1f2733;
+  --color-line-muted: #293340;
+
+  --color-text: #e6f1ff;
+  --color-text-soft: #c8d2dc;
+  --color-text-mute: #8a98a8;
+  --color-text-dim: #5a6878;
+
+  --color-cyan: #00d9ff;
+  --color-pink: #ff2e63;
+
+  /* Fonts */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Custom letter spacing for label-y mono text */
+  --tracking-wider2: 0.15em;
+  --tracking-wider3: 0.2em;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background-color: var(--color-cyan);
+    color: var(--color-bg);
+  }
+}
+
+@layer components {
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wider2);
+    color: var(--color-text-mute);
+  }
+}
