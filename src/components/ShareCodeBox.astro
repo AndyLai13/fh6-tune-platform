@@ -1,0 +1,24 @@
+---
+type Props = { code: string; tuneId: number; tuneSlug: string };
+const { code, tuneId, tuneSlug } = Astro.props;
+---
+<div class="bg-bg-card border border-cyan p-4 relative" data-share-box data-tune-id={tuneId} data-tune-slug={tuneSlug}>
+  <div class="font-mono text-[10px] text-cyan uppercase tracking-wider3 mb-2.5">＞ SHARE CODE (FH6)</div>
+  <div class="font-mono text-[26px] font-bold text-text tracking-wide mb-3.5" data-code>{code}</div>
+  <button class="w-full bg-cyan text-bg py-2.5 font-bold text-[13px] cursor-pointer font-mono uppercase tracking-wider2 border-0" data-copy-btn>⎘ COPY CODE</button>
+  <div class="font-mono text-[10px] text-text-dim mt-2.5 text-center">Paste in FH6 → Manage Tunes → Search</div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-share-box]').forEach((box) => {
+    const btn = box.querySelector<HTMLButtonElement>('[data-copy-btn]');
+    const codeEl = box.querySelector<HTMLElement>('[data-code]');
+    btn?.addEventListener('click', async () => {
+      if (!codeEl) return;
+      await navigator.clipboard.writeText(codeEl.innerText.trim());
+      const original = btn.innerText;
+      btn.innerText = '✓ COPIED';
+      setTimeout(() => { btn.innerText = original; }, 1500);
+    });
+  });
+</script>
