@@ -12,7 +12,9 @@ const isActive = (p: string) => activePath === p || activePath.startsWith(p + '/
     </a>
     <nav class="flex gap-5 text-[13px] font-medium">
       <a href="/browse" class:list={[isActive('/browse') ? 'text-text border-b-2 border-cyan pb-1' : 'text-text-mute']}>{t['nav.browse']}</a>
+      <a href="/tracks" class:list={[isActive('/tracks') ? 'text-text border-b-2 border-cyan pb-1' : 'text-text-mute']}>{t['nav.tracks']}</a>
       <a href="/upload" class:list={[isActive('/upload') ? 'text-text border-b-2 border-cyan pb-1' : 'text-text-mute']}>{t['nav.upload']}</a>
+      <a href="/my" class:list={[isActive('/my') ? 'text-text border-b-2 border-cyan pb-1' : 'text-text-mute']}>{t['nav.my']}</a>
     </nav>
   </div>
   <div class="flex gap-3 items-center">
