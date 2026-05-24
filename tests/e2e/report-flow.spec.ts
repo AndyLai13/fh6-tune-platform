@@ -19,7 +19,8 @@ test('report button opens dialog, submits report, shows thanks', async ({ page }
 test('report button visible on each review card', async ({ page }) => {
   await page.goto(`/tune/${SLUG}`);
   const reviewReportButtons = page.locator('[data-report-btn][data-target-kind="review"]');
-  expect(await reviewReportButtons.count()).toBeGreaterThanOrEqual(1);
+  // Miata demo (slug) has 4 seeded reviews — assert one button per card, not just "at least one"
+  expect(await reviewReportButtons.count()).toBe(4);
 });
 
 test('report dialog closes on Cancel button', async ({ page }) => {

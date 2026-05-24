@@ -70,7 +70,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
       if (!res) { status.textContent = '網路錯誤'; return; }
       if (res.ok) {
         status.textContent = '感謝您的回報';
-        setTimeout(() => dialog.close(), 1200);
+        setTimeout(() => { dialog.close(); form.reset(); }, 1200);
       } else {
         const data = await res.json().catch(() => ({}));
         const map: Record<string, string> = {
