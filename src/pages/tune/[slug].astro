@@ -18,7 +18,7 @@ const car = await getCarById(env.DB, tune.car_id);
 const reviewsResult = await listReviews(env.DB, tune.id, 20);
 const reviews = reviewsResult.results as Array<{ author_handle: string; rating: number; body: string | null; created_at: number }>;
 const tracksResult = await listTracksForTune(env.DB, tune.id);
-const tracks = (tracksResult.results ?? []) as Array<{ name: string; slug: string; surface: string; length_km: number | null; region: string | null }>;
+const tracks = (tracksResult.results) as Array<{ name: string; length_km: number | null; region: string | null }>;
 const values = JSON.parse(tune.tune_values);
 const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 0;
 ---

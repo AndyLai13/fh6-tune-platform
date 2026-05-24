@@ -21,6 +21,7 @@ test.describe.serial('recommended tracks', () => {
   });
 
   test('tune with no recommended tracks does not render the section', async ({ page }) => {
+    // demo07 has no tune_tracks rows in the seed (only the Supra above gets one via beforeAll)
     await page.goto('/tune/honda-civic-type-r-ek9-1997-demo07');
     await expect(page.locator('[data-recommended-tracks]')).not.toBeVisible();
   });
