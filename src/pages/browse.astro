@@ -3,6 +3,7 @@ import Base from '~/layouts/Base.astro';
 import TuneCard from '~/components/TuneCard.astro';
 import FilterSidebar from '~/components/FilterSidebar.astro';
 import { listTunes, searchTunes } from '~/lib/db';
+import { sanitizeFtsQuery } from '~/lib/fts';
 import { env } from 'cloudflare:workers';
 
 export const prerender = false;
@@ -14,13 +15,7 @@ const offset = q.get('page') ? (Number(q.get('page')) - 1) * limit : 0;
 
 let rows: Array<any>;
 if (searchQuery.length >= 2) {
-  // sanitize for FTS5 — same logic as /api/search
-  const fts = searchQuery
-    .replace(/[^\w\s-]/g, ' ')
-    .split(/\s+/)
-    .filter((t) => t.length >= 2)
-    .map((t) => `"${t}"*`)
-    .join(' OR ');
+  const fts = sanitizeFtsQuery(searchQuery);
   const r = fts ? await searchTunes(env.DB, fts, limit) : { results: [] };
   rows = (r.results ?? []) as Array<any>;
 } else {
