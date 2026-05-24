@@ -18,9 +18,14 @@ test('report button opens dialog, submits report, shows thanks', async ({ page }
 
 test('report button visible on each review card', async ({ page }) => {
   await page.goto(`/tune/${SLUG}`);
-  const reviewReportButtons = page.locator('[data-report-btn][data-target-kind="review"]');
-  // Miata demo (slug) has 4 seeded reviews — assert one button per card, not just "at least one"
-  expect(await reviewReportButtons.count()).toBe(4);
+  // Count actual rendered review cards, then assert report buttons match exactly.
+  // Don't hardcode review count: tests/e2e/review-flow.spec.ts targets the same slug
+  // and submits reviews, so the row count grows when both suites run.
+  const reviewCards = page.locator('section:has(h2:has-text("評論")) .border-l-\\[2px\\]');
+  const cardCount = await reviewCards.count();
+  expect(cardCount).toBeGreaterThanOrEqual(1);
+  const reportButtons = page.locator('[data-report-btn][data-target-kind="review"]');
+  expect(await reportButtons.count()).toBe(cardCount);
 });
 
 test('report dialog closes on Cancel button', async ({ page }) => {
