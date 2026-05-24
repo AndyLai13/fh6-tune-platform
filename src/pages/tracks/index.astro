@@ -1,0 +1,44 @@
+---
+import Base from '~/layouts/Base.astro';
+import { listAllTracks } from '~/lib/db';
+import { env } from 'cloudflare:workers';
+
+export const prerender = false;
+
+const result = await listAllTracks(env.DB);
+const tracks = result.results as Array<{ id: number; name: string; slug: string; surface: string; length_km: number | null; region: string | null }>;
+
+const byRegion = new Map<string, typeof tracks>();
+for (const t of tracks) {
+  const region = t.region ?? '其他';
+  if (!byRegion.has(region)) byRegion.set(region, []);
+  byRegion.get(region)!.push(t);
+}
+---
+<Base title="賽道" description="FH6 全部賽道列表。">
+  <section class="px-6 py-10 max-w-4xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ TRACKS</div>
+    <h1 class="text-[32px] font-extrabold mb-6">賽道 · {tracks.length} 條</h1>
+
+    <div class="space-y-8">
+      {Array.from(byRegion.entries()).map(([region, list]) => (
+        <div>
+          <h2 class="font-mono text-[12px] text-cyan tracking-wider3 mb-3 pb-2 border-b border-line uppercase">＞ {region}</h2>
+          <ul class="m-0 p-0 list-none grid grid-cols-1 md:grid-cols-2 gap-2">
+            {list.map((t) => (
+              <li>
+                <a href={`/tracks/${t.slug}`}
+                   class="block bg-bg-card border border-line p-3 no-underline hover:border-cyan">
+                  <div class="text-text font-semibold text-[14px]">{t.name}</div>
+                  <div class="font-mono text-[11px] text-text-dim mt-0.5">
+                    {t.surface}{t.length_km && ` · ${t.length_km} km`}
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>

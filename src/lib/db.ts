@@ -37,6 +37,14 @@ export async function getTrackBySlug(db: D1Database, slug: string) {
   return db.prepare('SELECT * FROM tracks WHERE slug = ?').bind(slug).first();
 }
 
+export async function listAllTracks(db: D1Database) {
+  return db.prepare(`
+    SELECT id, name, slug, surface, length_km, region
+    FROM tracks
+    ORDER BY region, name
+  `).all<{ id: number; name: string; slug: string; surface: string; length_km: number | null; region: string | null }>();
+}
+
 export async function getTuneBySlug(db: D1Database, slug: string): Promise<TuneRow | null> {
   return db.prepare("SELECT * FROM tunes WHERE slug = ? AND status = 'public'").bind(slug).first<TuneRow>();
 }
