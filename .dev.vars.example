@@ -1,0 +1,7 @@
+# Copy to .dev.vars (gitignored) for local dev.
+# These are Cloudflare's documented always-pass test keys — replace in prod.
+
+TURNSTILE_SECRET_KEY="1x0000000000000000000000000000000AA"
+IP_HASH_SALT="local-dev-salt-please-change-in-prod"
+EDIT_COOKIE_SECRET="local-dev-cookie-secret-32-chars-min"
+PUBLIC_TURNSTILE_SITE_KEY="1x00000000000000000000AA"
