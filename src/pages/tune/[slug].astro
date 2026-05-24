@@ -3,7 +3,7 @@ import Base from '~/layouts/Base.astro';
 import ShareCodeBox from '~/components/ShareCodeBox.astro';
 import TuneValuesGrid from '~/components/TuneValuesGrid.astro';
 import ReviewForm from '~/components/ReviewForm.astro';
-import { getTuneBySlug, getCarById, listReviews } from '~/lib/db';
+import { getTuneBySlug, getCarById, listReviews, listTracksForTune } from '~/lib/db';
 import { env } from 'cloudflare:workers';
 
 export const prerender = false;
@@ -17,6 +17,8 @@ if (!tune) {
 const car = await getCarById(env.DB, tune.car_id);
 const reviewsResult = await listReviews(env.DB, tune.id, 20);
 const reviews = reviewsResult.results as Array<{ author_handle: string; rating: number; body: string | null; created_at: number }>;
+const tracksResult = await listTracksForTune(env.DB, tune.id);
+const tracks = (tracksResult.results ?? []) as Array<{ name: string; slug: string; surface: string; length_km: number | null; region: string | null }>;
 const values = JSON.parse(tune.tune_values);
 const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 0;
 ---
@@ -44,6 +46,21 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
       <div class="mt-6 p-5 bg-bg-card border-l-[3px] border-pink">
         <div class="font-mono text-[10px] text-pink tracking-wider2 mb-1.5">＞ 調校師備註</div>
         <p class="leading-relaxed text-text-soft text-[14px] m-0">{tune.description}</p>
+      </div>
+    )}
+
+    {tracks.length > 0 && (
+      <div data-recommended-tracks class="mt-6 p-5 bg-bg-card border-l-[3px] border-cyan">
+        <div class="font-mono text-[10px] text-cyan tracking-wider2 mb-2">＞ 推薦賽道</div>
+        <ul class="m-0 p-0 list-none flex flex-wrap gap-2">
+          {tracks.map((t) => (
+            <li class="font-mono text-[12px] bg-bg border border-line px-3 py-1.5">
+              {t.name}
+              {t.region && <span class="text-text-dim"> · {t.region}</span>}
+              {t.length_km && <span class="text-text-dim"> · {t.length_km} km</span>}
+            </li>
+          ))}
+        </ul>
       </div>
     )}
   </section>

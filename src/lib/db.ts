@@ -134,6 +134,16 @@ export async function detachAllTracks(db: D1Database, tuneId: number) {
   await db.prepare('DELETE FROM tune_tracks WHERE tune_id = ?').bind(tuneId).run();
 }
 
+export async function listTracksForTune(db: D1Database, tuneId: number) {
+  return db.prepare(`
+    SELECT t.id, t.name, t.slug, t.surface, t.length_km, t.region
+    FROM tune_tracks tt
+    JOIN tracks t ON t.id = tt.track_id
+    WHERE tt.tune_id = ?
+    ORDER BY t.name
+  `).bind(tuneId).all<{ id: number; name: string; slug: string; surface: string; length_km: number | null; region: string | null }>();
+}
+
 export async function incrementDownload(db: D1Database, tuneId: number) {
   await db.prepare('UPDATE tunes SET download_count = download_count + 1 WHERE id = ?').bind(tuneId).run();
 }
