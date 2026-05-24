@@ -3,6 +3,7 @@ import Base from '~/layouts/Base.astro';
 import ShareCodeBox from '~/components/ShareCodeBox.astro';
 import TuneValuesGrid from '~/components/TuneValuesGrid.astro';
 import ReviewForm from '~/components/ReviewForm.astro';
+import ReportButton from '~/components/ReportButton.astro';
 import { getTuneBySlug, getCarById, listReviews, listTracksForTune } from '~/lib/db';
 import { env } from 'cloudflare:workers';
 
@@ -16,7 +17,7 @@ if (!tune) {
 }
 const car = await getCarById(env.DB, tune.car_id);
 const reviewsResult = await listReviews(env.DB, tune.id, 20);
-const reviews = reviewsResult.results as Array<{ author_handle: string; rating: number; body: string | null; created_at: number }>;
+const reviews = reviewsResult.results as Array<{ id: number; author_handle: string; rating: number; body: string | null; created_at: number }>;
 const tracksResult = await listTracksForTune(env.DB, tune.id);
 const tracks = (tracksResult.results) as Array<{ name: string; length_km: number | null; region: string | null }>;
 const values = JSON.parse(tune.tune_values);
@@ -38,6 +39,7 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
           <span class="text-text-dim">|</span>
           <span class="text-text-dim">↓ <span class="text-text">{tune.download_count.toLocaleString()}</span> 次下載</span>
         </div>
+        <div class="mt-3"><ReportButton targetKind="tune" targetId={tune.id} /></div>
       </div>
       <ShareCodeBox code={tune.share_code} tuneId={tune.id} tuneSlug={tune.slug} />
     </div>
@@ -86,6 +88,7 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
               <div class="text-cyan font-mono text-[12px]">★ {r.rating}</div>
             </div>
             {r.body && <p class="m-0 leading-relaxed text-text-soft text-[13px]">{r.body}</p>}
+            <div class="mt-2 text-right"><ReportButton targetKind="review" targetId={r.id} /></div>
           </div>
         ))}
       </div>
