@@ -25,11 +25,11 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
             <input name="name" required maxlength="120" class="mt-1.5 w-full bg-bg border border-line text-text p-2.5" />
           </label>
           <label class="block">
-            <span class="label-mono">FH6 分享碼</span>
+            <span class="label-mono">FH6 調校碼</span>
             <input name="share_code" required maxlength="11" data-share-code-input
               class="mt-1.5 w-full bg-bg border border-cyan text-text p-2.5 font-mono text-[16px] font-bold tracking-wide" />
             <div data-share-code-warning class="hidden mt-1.5 font-mono text-[11px] text-pink">
-              ⚠ 已存在類似分享碼：<a data-existing-link href="#" class="text-cyan no-underline">查看現有調校 →</a>
+              ⚠ 已存在類似調校碼：<a data-existing-link href="#" class="text-cyan no-underline">查看現有調校 →</a>
             </div>
           </label>
           <label class="md:col-span-2 block">
