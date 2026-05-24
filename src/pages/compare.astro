@@ -1,0 +1,72 @@
+---
+import Base from '~/layouts/Base.astro';
+import TuneValuesGrid from '~/components/TuneValuesGrid.astro';
+import { getTuneBySlug, getCarById } from '~/lib/db';
+import { env } from 'cloudflare:workers';
+
+export const prerender = false;
+
+const q = Astro.url.searchParams;
+const slugA = q.get('a')?.trim() ?? '';
+const slugB = q.get('b')?.trim() ?? '';
+
+const [tuneA, tuneB] = await Promise.all([
+  slugA ? getTuneBySlug(env.DB, slugA) : null,
+  slugB ? getTuneBySlug(env.DB, slugB) : null
+]);
+
+const [carA, carB] = await Promise.all([
+  tuneA ? getCarById(env.DB, tuneA.car_id) : null,
+  tuneB ? getCarById(env.DB, tuneB.car_id) : null
+]);
+
+const valuesA = tuneA ? JSON.parse(tuneA.tune_values) : null;
+const valuesB = tuneB ? JSON.parse(tuneB.tune_values) : null;
+
+const showHint = !slugA && !slugB;
+const missingA = slugA && !tuneA;
+const missingB = slugB && !tuneB;
+---
+<Base title="調校比較" description="並排比較兩筆調校的所有數值。">
+  <section class="px-6 py-10 max-w-7xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ COMPARE</div>
+    <h1 class="text-[32px] font-extrabold mb-6">調校比較</h1>
+
+    {showHint && (
+      <div data-compare-hint class="bg-bg-card border-l-[3px] border-line p-5">
+        <div class="font-mono text-[11px] text-text-dim tracking-wider2 mb-2">＞ 使用方法</div>
+        <p class="text-text-mute m-0 mb-3">在 URL 加上 <code class="text-cyan">?a=slug-1&b=slug-2</code> 比較任兩筆調校。</p>
+        <p class="text-text-mute m-0 text-[13px]">範例：<a href="/compare?a=toyota-supra-mk4-1994-demo04&b=mazda-mx5-miata-na-1989-demo06" class="text-cyan">Supra vs Miata</a></p>
+      </div>
+    )}
+
+    {(missingA || missingB) && (
+      <div data-compare-missing class="bg-bg-card border-l-[3px] border-pink p-5">
+        <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ ERROR</div>
+        <p class="text-text-mute m-0">
+          {missingA && <span>找不到調校：<code>{slugA}</code></span>}
+          {missingB && <span>找不到調校：<code>{slugB}</code></span>}
+        </p>
+      </div>
+    )}
+
+    {tuneA && tuneB && valuesA && valuesB && (
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <div class="font-mono text-[11px] text-cyan tracking-wider3 mb-1">＞ A · {tuneA.tune_type.toUpperCase()} / {tuneA.pi_class} / {tuneA.drivetrain}</div>
+          <h2 class="text-[24px] font-bold mb-1">{tuneA.name}</h2>
+          <div class="text-[14px] text-text-mute mb-2">{carA?.year} {carA?.make} {carA?.model}</div>
+          <div class="font-mono text-[13px] text-cyan mb-4">{tuneA.share_code}</div>
+          <TuneValuesGrid values={valuesA} />
+        </div>
+        <div>
+          <div class="font-mono text-[11px] text-pink tracking-wider3 mb-1">＞ B · {tuneB.tune_type.toUpperCase()} / {tuneB.pi_class} / {tuneB.drivetrain}</div>
+          <h2 class="text-[24px] font-bold mb-1">{tuneB.name}</h2>
+          <div class="text-[14px] text-text-mute mb-2">{carB?.year} {carB?.make} {carB?.model}</div>
+          <div class="font-mono text-[13px] text-pink mb-4">{tuneB.share_code}</div>
+          <TuneValuesGrid values={valuesB} />
+        </div>
+      </div>
+    )}
+  </section>
+</Base>
