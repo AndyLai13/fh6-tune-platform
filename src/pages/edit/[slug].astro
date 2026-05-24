@@ -17,7 +17,7 @@ const values = JSON.parse(tune.tune_values);
 <Base title={`編輯 ${tune.name}`}>
   <section class="px-6 py-8 max-w-3xl mx-auto">
     <h1 class="text-[26px] font-bold mb-5">編輯調校</h1>
-    <form id="edit-form" class="space-y-4">
+    <form id="edit-form" data-slug={slug} class="space-y-4">
       <label class="block">
         <span class="label-mono">編輯密碼</span>
         <input type="password" name="edit_password" required minlength="6" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
@@ -44,27 +44,16 @@ const values = JSON.parse(tune.tune_values);
     </form>
   </section>
 
-  <script define:vars={{ slug }}>
-    const form = document.getElementById('edit-form');
-    const status = document.getElementById('edit-status');
+  <script>
+    import { buildTuneValues } from '~/lib/tune-form';
 
-    function buildTuneValues(fd) {
-      const out = {};
-      for (const [key, value] of fd.entries()) {
-        if (!key.startsWith('tv.')) continue;
-        const path = key.slice(3).split('.');
-        let cur = out;
-        for (let i = 0; i < path.length - 1; i++) {
-          cur[path[i]] = cur[path[i]] ?? {};
-          cur = cur[path[i]];
-        }
-        cur[path[path.length - 1]] = Number(value);
-      }
-      return out;
-    }
+    const form = document.getElementById('edit-form') as HTMLFormElement;
+    const status = document.getElementById('edit-status') as HTMLElement;
+    const slug = form.dataset.slug!;
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!form.reportValidity()) return;
       const fd = new FormData(form);
       const body = {
         edit_password: fd.get('edit_password'),
@@ -78,7 +67,7 @@ const values = JSON.parse(tune.tune_values);
       const data = await res.json();
       status.textContent = res.ok ? '已儲存。' : `錯誤：${data.error || 'unknown'}`;
     });
-    document.getElementById('delete-btn').addEventListener('click', async () => {
+    document.getElementById('delete-btn')!.addEventListener('click', async () => {
       if (!confirm('確定要刪除這筆調校？')) return;
       const fd = new FormData(form);
       const res = await fetch(`/api/tunes/${slug}`, {

@@ -1,10 +1,12 @@
+import { TUNE_VALUE_RANGES } from '~/data/tune-schema';
+
 export type TuneFieldGroup = {
   key: keyof import('~/data/tune-schema').TuneValues;
   legend: string;
   fields: Array<{
     path: string;
     label: string;
-    range: string;
+    range: keyof typeof TUNE_VALUE_RANGES;
     axis?: 'F' | 'R';
     unit?: string;
     step?: string;

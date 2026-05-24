@@ -119,23 +119,10 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
 
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script>
+    import { buildTuneValues } from '~/lib/tune-form';
+
     const form = document.getElementById('upload-form') as HTMLFormElement;
     const status = document.getElementById('upload-status') as HTMLElement;
-
-    function buildTuneValues(fd: FormData): Record<string, any> {
-      const out: Record<string, any> = {};
-      for (const [key, value] of fd.entries()) {
-        if (!key.startsWith('tv.')) continue;
-        const path = key.slice(3).split('.');
-        let cur = out;
-        for (let i = 0; i < path.length - 1; i++) {
-          cur[path[i]] = cur[path[i]] ?? {};
-          cur = cur[path[i]];
-        }
-        cur[path[path.length - 1]] = Number(value);
-      }
-      return out;
-    }
 
     document.querySelectorAll<HTMLButtonElement>('[data-type-group] button').forEach((b) => {
       b.addEventListener('click', () => {
@@ -151,6 +138,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (!form.reportValidity()) return;
       status.textContent = '上傳中…';
       const fd = new FormData(form);
       const body = {
