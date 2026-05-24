@@ -45,6 +45,17 @@ export async function listAllTracks(db: D1Database) {
   `).all<{ id: number; name: string; slug: string; surface: string; length_km: number | null; region: string | null }>();
 }
 
+export async function listTunesForTrack(db: D1Database, trackId: number) {
+  return db.prepare(`
+    SELECT t.*, c.year AS car_year, c.make AS car_make, c.model AS car_model, c.slug AS car_slug
+    FROM tunes t
+    JOIN tune_tracks tt ON tt.tune_id = t.id
+    JOIN cars c ON c.id = t.car_id
+    WHERE tt.track_id = ? AND t.status = 'public'
+    ORDER BY t.download_count DESC
+  `).bind(trackId).all();
+}
+
 export async function getTuneBySlug(db: D1Database, slug: string): Promise<TuneRow | null> {
   return db.prepare("SELECT * FROM tunes WHERE slug = ? AND status = 'public'").bind(slug).first<TuneRow>();
 }

@@ -1,0 +1,47 @@
+---
+import Base from '~/layouts/Base.astro';
+import TuneCard from '~/components/TuneCard.astro';
+import { getTrackBySlug, listTunesForTrack } from '~/lib/db';
+import { env } from 'cloudflare:workers';
+
+export const prerender = false;
+
+const slug = Astro.params.slug!;
+const track = await getTrackBySlug(env.DB, slug) as { id: number; name: string; slug: string; surface: string; length_km: number | null; region: string | null } | null;
+if (!track) {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
+
+const tunesResult = await listTunesForTrack(env.DB, track.id);
+const tunes = tunesResult.results as Array<any>;
+---
+<Base title={track.name} description={`Tunes recommended for ${track.name}.`}>
+  <section class="px-6 py-10 max-w-6xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ TRACK / {track.region ?? '—'}</div>
+    <h1 class="text-[36px] md:text-[48px] font-extrabold mb-2">{track.name}</h1>
+    <div class="font-mono text-[12px] text-text-mute mb-8">
+      {track.surface}{track.length_km && ` · ${track.length_km} km`}{track.region && ` · ${track.region}`}
+    </div>
+
+    <h2 class="text-[20px] font-bold mb-4">推薦此賽道的調校 · {tunes.length}</h2>
+
+    {tunes.length === 0 ? (
+      <div data-empty-state class="bg-bg-card border-l-[3px] border-line p-5">
+        <p class="text-text-mute m-0">還沒有調校推薦這條賽道。</p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        {tunes.map((r: any, i: number) => (
+          <TuneCard
+            slug={r.slug} name={r.name} shareCode={r.share_code}
+            carYear={r.car_year} carMake={r.car_make} carModel={r.car_model}
+            piClass={r.pi_class} tuneType={r.tune_type} drivetrain={r.drivetrain}
+            rating={r.rating_count > 0 ? r.rating_sum / r.rating_count : 0}
+            downloads={r.download_count} authorHandle={r.author_handle}
+            accent={i % 3 === 1 ? 'pink' : 'cyan'} />
+        ))}
+      </div>
+    )}
+  </section>
+</Base>
