@@ -161,6 +161,74 @@ const tunes: Tune[] = [
       { author: 'flat_six_fan', rating: 5, body: 'Cayman GT4 應有的樣子。' },
       { author: 'track_day_jp', rating: 4, body: '稍微挑胎，但跑起來真的快。' }
     ]
+  },
+  // ↓↓ 模擬「向巴哈作者徵詢授權後收錄」的種子 — description 用 SOP 規定的前綴格式
+  {
+    name: '森林拉力 GR Yaris',
+    car_id: 14, car_slug: 'toyota-gr-yaris-2021',
+    tune_type: 'rally', pi_class: 'A', pi_score: 800, drivetrain: 'AWD',
+    power_hp: 340, weight_lb: 2820,
+    description: '經 bahamut_rally_yamada 授權收錄。原文：https://forum.gamer.com.tw/C.php?bsn=7697&snA=7501\n\nGR Yaris 拉力風格設定。中差速器 70% 鎖定讓四輪平均出力，後束角 +0.2 增加入彎穩定。砂石路面建議降胎壓到 26 psi。',
+    author: 'bahamut_rally_yamada', share_code: '414-922-365',
+    rating_sum: 28, rating_count: 6, download_count: 1820,
+    reviews: [
+      { author: 'dirt_runner_tw', rating: 5, body: '砂石/雪地通殺，調得很穩。' },
+      { author: 'wrc_jp', rating: 4, body: '柏油路面略推頭，符合 rally 設定。' }
+    ]
+  },
+  {
+    name: 'FF 之神 DC2',
+    car_id: 19, car_slug: 'honda-integra-type-r-dc2-1995',
+    tune_type: 'grip', pi_class: 'A', pi_score: 760, drivetrain: 'FWD',
+    power_hp: 220, weight_lb: 2380,
+    description: '經 bahamut_b18c_lover 授權收錄。原文：https://forum.gamer.com.tw/C.php?bsn=7697&snA=7488\n\nDC2 經典 FF 抓地設定。前外傾 -3.0 給最大化前輪 grip，後防傾桿吃滿讓後輪輕度滑動可控。Tsukuba 1 分 4 秒級。',
+    author: 'bahamut_b18c_lover', share_code: '781-446-093',
+    rating_sum: 35, rating_count: 8, download_count: 2210,
+    reviews: [
+      { author: 'honda_purist', rating: 5, body: 'B18C 之魂！' },
+      { author: 'civic_too', rating: 5, body: '可以順過 hairpin 不用拉手煞，神。' },
+      { author: 'fwd_only', rating: 4, body: '長直線會被 RWD 同 PI 拉開但彎中無敵。' }
+    ]
+  },
+  {
+    name: '雙轉子之魂 FD',
+    car_id: 17, car_slug: 'mazda-rx7-fd3s-1992',
+    tune_type: 'drift', pi_class: 'S1', pi_score: 880, drivetrain: 'RWD',
+    power_hp: 520, weight_lb: 2820,
+    description: '經 bahamut_dorift_fd 授權收錄。原文：https://forum.gamer.com.tw/C.php?bsn=7697&snA=7376\n\nFD3S 高 PI 漂移設定。差速器加速 100%、減速 60%，前束 -0.8 給快速回正。馬力夠拉長煙，箱根全程連流不卡。',
+    author: 'bahamut_dorift_fd', share_code: '653-771-208',
+    rating_sum: 51, rating_count: 12, download_count: 3920,
+    reviews: [
+      { author: 'tandem_master_tw', rating: 5, body: 'FD 漂這樣的設定很神奇，能控。' },
+      { author: 'rx7_only', rating: 5, body: '13B 永遠的傳奇。' },
+      { author: 'hakone_local', rating: 4, body: '長彎要溫柔點油門但很爽。' }
+    ]
+  },
+  {
+    name: 'A90 Supra 跑山',
+    car_id: 13, car_slug: 'toyota-gr-supra-mk5-2020',
+    tune_type: 'touge', pi_class: 'A', pi_score: 798, drivetrain: 'RWD',
+    power_hp: 420, weight_lb: 3340,
+    description: '經 bahamut_A90_otaku 授權收錄。原文：https://forum.gamer.com.tw/C.php?bsn=7697&snA=7423\n\n新世代 A90 Supra 山路下坡設定。前防傾桿較硬讓車頭咬入，後輪保留一定的可控滑動。煞車前 54% 方便煞車塞角。秋名山下坡 PB -1.8s。',
+    author: 'bahamut_A90_otaku', share_code: '888-202-440',
+    rating_sum: 19, rating_count: 5, download_count: 1450,
+    reviews: [
+      { author: 'jdm_modern', rating: 4, body: '新 Supra 也能跑山，喜歡這個方向。' },
+      { author: 'b58_engine', rating: 5, body: 'B58 聲音配上這個調校就是爽。' }
+    ]
+  },
+  {
+    name: 'M3 E46 紐柏林',
+    car_id: 31, car_slug: 'bmw-m3-e46-2002',
+    tune_type: 'grip', pi_class: 'S1', pi_score: 850, drivetrain: 'RWD',
+    power_hp: 460, weight_lb: 3380,
+    description: '經 bahamut_e46_classic 授權收錄。原文：https://forum.gamer.com.tw/C.php?bsn=7697&snA=7530\n\nE46 M3 北環設定。空力 50/50，前後外傾各 -2.5，差速器加速 35%（不要太鎖避免出彎推頭）。S54 直六的精髓在出彎時補油，這套設定讓你敢補。',
+    author: 'bahamut_e46_classic', share_code: '317-996-082',
+    rating_sum: 31, rating_count: 7, download_count: 2380,
+    reviews: [
+      { author: 'flat_six_no', rating: 5, body: 'S54 永遠的神。' },
+      { author: 'nordschleife_jp', rating: 4, body: 'Karussell 過得去，Adenauer 略推。' }
+    ]
   }
 ];
 

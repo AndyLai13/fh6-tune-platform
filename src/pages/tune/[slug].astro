@@ -47,7 +47,11 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
     {tune.description && (
       <div class="mt-6 p-5 bg-bg-card border-l-[3px] border-pink">
         <div class="font-mono text-[10px] text-pink tracking-wider2 mb-1.5">＞ 調校師備註</div>
-        <p class="leading-relaxed text-text-soft text-[14px] m-0">{tune.description}</p>
+        <p class="leading-relaxed text-text-soft text-[14px] m-0 whitespace-pre-wrap" set:html={
+          tune.description
+            .replace(/[&<>"']/g, (c: string) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] as string))
+            .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener nofollow" class="text-cyan">$1</a>')
+        } />
       </div>
     )}
 
