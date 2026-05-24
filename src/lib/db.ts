@@ -70,6 +70,10 @@ export async function getTuneBySlug(db: D1Database, slug: string): Promise<TuneR
   return db.prepare("SELECT * FROM tunes WHERE slug = ? AND status = 'public'").bind(slug).first<TuneRow>();
 }
 
+export async function getTuneByShareCode(db: D1Database, code: string) {
+  return db.prepare("SELECT slug, name FROM tunes WHERE share_code = ? AND status = 'public' LIMIT 1").bind(code).first<{ slug: string; name: string }>();
+}
+
 export async function getTuneForEdit(db: D1Database, slug: string): Promise<TuneRow | null> {
   return db.prepare("SELECT * FROM tunes WHERE slug = ? AND status != 'deleted'").bind(slug).first<TuneRow>();
 }
