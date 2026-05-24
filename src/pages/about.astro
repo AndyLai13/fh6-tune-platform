@@ -1,0 +1,48 @@
+---
+import Base from '~/layouts/Base.astro';
+---
+<Base title="關於" description="touge.gg — Forza Horizon 6 玩家調校資料庫。">
+  <section class="px-6 py-12 max-w-3xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-3">＞ ABOUT</div>
+    <h1 class="text-[40px] font-extrabold mb-6">關於 touge.gg</h1>
+
+    <div class="space-y-5 text-[15px] leading-relaxed text-text-soft">
+      <p>
+        <strong class="text-cyan">touge.gg</strong> 是 Forza Horizon 6 玩家社群驅動的調校資料庫。
+        我們不上傳調校檔本身——只記錄玩家在遊戲內生成的<strong>分享碼</strong>、車輛、類型、PI 等級、和你的調校數值。
+        其他玩家在遊戲裡輸入分享碼，就能下載你的調校。
+      </p>
+
+      <h2 class="text-[22px] font-bold pt-4">為什麼存在</h2>
+      <p>
+        FH6 遊戲內的調校搜尋只能用車輛和類型過濾，很難找到「峠路下坡專用」、「灣岸直線設定」這種具體用途的調校。
+        這個站把分散在 Reddit、Discord、YouTube 留言的調校集中起來，加上評分、評論、賽道推薦，讓你找到能用的東西。
+      </p>
+
+      <h2 class="text-[22px] font-bold pt-4">怎麼用</h2>
+      <ul class="list-disc list-inside space-y-1.5">
+        <li>瀏覽 <a href="/browse" class="text-cyan">/browse</a> 找調校</li>
+        <li>用 Header 搜尋框搜車輛或調校名稱</li>
+        <li>找到喜歡的就按「複製分享碼」，回遊戲內貼上</li>
+        <li>跑過之後留評分 + 評論幫助其他玩家</li>
+        <li>有自己的調校就到 <a href="/upload" class="text-cyan">/upload</a> 上傳</li>
+      </ul>
+
+      <h2 class="text-[22px] font-bold pt-4">不需要註冊</h2>
+      <p>
+        上傳時設一組編輯密碼，之後拿密碼就能改/刪自己的調校。我們不存帳號、不存 email、只存 IP 的每日 salt 雜湊（用來防濫用）。
+      </p>
+
+      <h2 class="text-[22px] font-bold pt-4">關於版權</h2>
+      <p class="text-text-mute text-[13px]">
+        本站與 Microsoft 或 Playground Games 無任何關聯。Forza Horizon™ 是 Microsoft 的商標。
+        所有調校數值、分享碼皆由玩家自願上傳，本站不託管任何遊戲檔案。
+      </p>
+    </div>
+
+    <div class="mt-10 pt-6 border-t border-line flex gap-3">
+      <a href="/" class="bg-cyan text-bg px-5 py-2.5 font-mono font-bold uppercase tracking-wider2 no-underline">回首頁</a>
+      <a href="/browse" class="border border-line text-text px-5 py-2.5 font-mono font-bold uppercase tracking-wider2 no-underline">瀏覽調校</a>
+    </div>
+  </section>
+</Base>
