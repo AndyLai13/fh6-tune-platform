@@ -18,17 +18,20 @@ const { slug, name, shareCode, carYear, carMake, carModel, piClass, tuneType, dr
 const accentClass = accent === 'cyan' ? 'bg-cyan' : 'bg-pink';
 const ratingColor = accent === 'cyan' ? 'text-cyan' : 'text-pink';
 ---
-<a href={`/tune/${slug}`} class="block bg-bg-card border border-line p-4 relative no-underline">
+<div class="block bg-bg-card border border-line p-4 relative no-underline">
+  <a href={`/tune/${slug}`} class="absolute inset-0 z-0" aria-label={name}></a>
   <div class:list={['absolute top-0 left-0 w-[3px] h-full', accentClass]}></div>
-  <div class="flex justify-between items-start mb-3">
-    <div class="font-mono text-[10px] text-text-dim uppercase tracking-wider2">{piClass} · {tuneType.toUpperCase()} · {drivetrain}</div>
-    <div class:list={['font-mono text-[11px]', ratingColor]}>★ {rating.toFixed(1)}</div>
+  <div class="relative z-10 pointer-events-none">
+    <div class="flex justify-between items-start mb-3">
+      <div class="font-mono text-[10px] text-text-dim uppercase tracking-wider2">{piClass} · {tuneType.toUpperCase()} · {drivetrain}</div>
+      <div class:list={['font-mono text-[11px]', ratingColor]}>★ {rating.toFixed(1)}</div>
+    </div>
+    <div class="text-[15px] font-bold leading-tight mb-1 text-text">{name}</div>
+    <div class="text-[12px] text-text-mute mb-3">{carYear} {carMake} {carModel}</div>
+    <div class="font-mono text-[11px] text-cyan tracking-wide mb-2.5">{shareCode}</div>
+    <div class="flex justify-between font-mono text-[10px] text-text-dim">
+      <a href={`/tuner/${authorHandle}`} class="text-text-dim hover:text-cyan no-underline pointer-events-auto relative z-10">@{authorHandle}</a>
+      <span>↓ {downloads.toLocaleString()}</span>
+    </div>
   </div>
-  <div class="text-[15px] font-bold leading-tight mb-1 text-text">{name}</div>
-  <div class="text-[12px] text-text-mute mb-3">{carYear} {carMake} {carModel}</div>
-  <div class="font-mono text-[11px] text-cyan tracking-wide mb-2.5">{shareCode}</div>
-  <div class="flex justify-between font-mono text-[10px] text-text-dim">
-    <span>@{authorHandle}</span>
-    <span>↓ {downloads.toLocaleString()}</span>
-  </div>
-</a>
+</div>

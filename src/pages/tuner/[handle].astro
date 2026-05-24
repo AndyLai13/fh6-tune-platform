@@ -1,0 +1,47 @@
+---
+import Base from '~/layouts/Base.astro';
+import TuneCard from '~/components/TuneCard.astro';
+import { listTunesForTuner } from '~/lib/db';
+import { env } from 'cloudflare:workers';
+
+export const prerender = false;
+
+const handle = Astro.params.handle!;
+const tunesResult = await listTunesForTuner(env.DB, handle);
+const tunes = tunesResult.results as Array<any>;
+
+const totalDownloads = tunes.reduce((sum: number, t: any) => sum + (t.download_count ?? 0), 0);
+const ratedCount = tunes.filter((t: any) => t.rating_count > 0).length;
+const avgRating = ratedCount > 0
+  ? tunes.reduce((sum: number, t: any) => t.rating_count > 0 ? sum + (t.rating_sum / t.rating_count) : sum, 0) / ratedCount
+  : 0;
+---
+<Base title={`@${handle}`} description={`${handle} 的調校列表。`}>
+  <section class="px-6 py-10 max-w-6xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ TUNER</div>
+    <h1 class="text-[36px] md:text-[48px] font-extrabold mb-2">@{handle}</h1>
+    <div class="font-mono text-[12px] text-text-mute mb-8">
+      {tunes.length} 筆調校 · ↓ {totalDownloads.toLocaleString()} 次下載
+      {ratedCount > 0 && ` · ★ ${avgRating.toFixed(1)} 平均評分`}
+    </div>
+
+    {tunes.length === 0 ? (
+      <div data-empty-state class="bg-bg-card border-l-[3px] border-line p-5">
+        <div class="font-mono text-[11px] text-text-dim tracking-wider2 mb-2">＞ 空空如也</div>
+        <p class="text-text-mute m-0">@{handle} 還沒有公開的調校。</p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        {tunes.map((r: any, i: number) => (
+          <TuneCard
+            slug={r.slug} name={r.name} shareCode={r.share_code}
+            carYear={r.car_year} carMake={r.car_make} carModel={r.car_model}
+            piClass={r.pi_class} tuneType={r.tune_type} drivetrain={r.drivetrain}
+            rating={r.rating_count > 0 ? r.rating_sum / r.rating_count : 0}
+            downloads={r.download_count} authorHandle={r.author_handle}
+            accent={i % 3 === 1 ? 'pink' : 'cyan'} />
+        ))}
+      </div>
+    )}
+  </section>
+</Base>
