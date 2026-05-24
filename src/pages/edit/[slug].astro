@@ -2,6 +2,7 @@
 import Base from '~/layouts/Base.astro';
 import { getTuneForEdit } from '~/lib/db';
 import { env } from 'cloudflare:workers';
+import TuneValuesForm from '~/components/TuneValuesForm.astro';
 
 export const prerender = false;
 const slug = Astro.params.slug!;
@@ -29,10 +30,12 @@ const values = JSON.parse(tune.tune_values);
         <span class="label-mono">說明</span>
         <textarea name="description" rows="5" class="mt-1.5 w-full bg-bg border border-line text-text p-2.5">{tune.description ?? ''}</textarea>
       </label>
-      <label class="block">
-        <span class="label-mono">調校數值 (JSON)</span>
-        <textarea name="tune_values" rows="20" class="mt-1.5 w-full bg-bg border border-line text-text font-mono text-[11px] p-2">{JSON.stringify(values, null, 2)}</textarea>
-      </label>
+      <fieldset class="block">
+        <span class="label-mono">調校數值</span>
+        <div class="mt-2">
+          <TuneValuesForm initial={values} />
+        </div>
+      </fieldset>
       <div class="flex gap-2.5 justify-end">
         <button type="submit" class="bg-cyan text-bg px-5 py-2.5 font-mono font-bold border-0">儲存</button>
         <button type="button" id="delete-btn" class="bg-transparent border border-pink text-pink px-5 py-2.5 font-mono">刪除調校</button>
@@ -44,6 +47,22 @@ const values = JSON.parse(tune.tune_values);
   <script define:vars={{ slug }}>
     const form = document.getElementById('edit-form');
     const status = document.getElementById('edit-status');
+
+    function buildTuneValues(fd) {
+      const out = {};
+      for (const [key, value] of fd.entries()) {
+        if (!key.startsWith('tv.')) continue;
+        const path = key.slice(3).split('.');
+        let cur = out;
+        for (let i = 0; i < path.length - 1; i++) {
+          cur[path[i]] = cur[path[i]] ?? {};
+          cur = cur[path[i]];
+        }
+        cur[path[path.length - 1]] = Number(value);
+      }
+      return out;
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(form);
@@ -52,7 +71,7 @@ const values = JSON.parse(tune.tune_values);
         updates: {
           name: fd.get('name'),
           description: fd.get('description'),
-          tune_values: JSON.parse(fd.get('tune_values'))
+          tune_values: buildTuneValues(fd)
         }
       };
       const res = await fetch(`/api/tunes/${slug}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });

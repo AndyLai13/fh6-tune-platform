@@ -2,6 +2,7 @@
 import Base from '~/layouts/Base.astro';
 import { sampleTuneValues } from '~/lib/tune-values';
 import { env } from 'cloudflare:workers';
+import TuneValuesForm from '~/components/TuneValuesForm.astro';
 const carsResult = await env.DB.prepare('SELECT id, year, make, model, slug FROM cars ORDER BY make, model').all();
 const tracksResult = await env.DB.prepare('SELECT id, name FROM tracks ORDER BY name').all();
 const cars = (carsResult.results ?? []) as Array<{ id: number; year: number; make: string; model: string }>;
@@ -72,9 +73,9 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
       </fieldset>
 
       <fieldset class="bg-bg-card border border-line p-5">
-        <legend class="font-mono text-[11px] text-text tracking-wider3">03 ＞ 調校數值（從 FH6 貼上）</legend>
-        <p class="text-text-dim text-[12px] mt-2">MVP 暫用：直接以 JSON 貼上調校數值。v1.1 將提供逐欄輸入。</p>
-        <textarea name="_tune_values_json" rows="10" class="mt-2 w-full bg-bg border border-line text-text font-mono text-[11px] p-2">{JSON.stringify(sample, null, 2)}</textarea>
+        <legend class="font-mono text-[11px] text-text tracking-wider3">03 ＞ 調校數值</legend>
+        <p class="text-text-dim text-[12px] mt-2 mb-3">數值已預填合理範例，按 FH6 內顯示的數字逐欄輸入即可。</p>
+        <TuneValuesForm initial={sample} />
       </fieldset>
 
       <fieldset class="bg-bg-card border border-line p-5">
@@ -121,6 +122,21 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
     const form = document.getElementById('upload-form') as HTMLFormElement;
     const status = document.getElementById('upload-status') as HTMLElement;
 
+    function buildTuneValues(fd: FormData): Record<string, any> {
+      const out: Record<string, any> = {};
+      for (const [key, value] of fd.entries()) {
+        if (!key.startsWith('tv.')) continue;
+        const path = key.slice(3).split('.');
+        let cur = out;
+        for (let i = 0; i < path.length - 1; i++) {
+          cur[path[i]] = cur[path[i]] ?? {};
+          cur = cur[path[i]];
+        }
+        cur[path[path.length - 1]] = Number(value);
+      }
+      return out;
+    }
+
     document.querySelectorAll<HTMLButtonElement>('[data-type-group] button').forEach((b) => {
       b.addEventListener('click', () => {
         document.querySelectorAll<HTMLButtonElement>('[data-type-group] button').forEach((x) => {
@@ -147,7 +163,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? '1x0000000
         drivetrain: fd.get('drivetrain'),
         power_hp: Number(fd.get('power_hp')) || undefined,
         description: fd.get('description'),
-        tune_values: JSON.parse(String(fd.get('_tune_values_json'))),
+        tune_values: buildTuneValues(fd),
         author_handle: fd.get('author_handle'),
         edit_password: fd.get('edit_password'),
         track_ids: fd.getAll('track_ids').map(Number),

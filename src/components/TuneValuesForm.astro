@@ -1,0 +1,44 @@
+---
+import type { TuneValues } from '~/data/tune-schema';
+import { TUNE_VALUE_RANGES } from '~/data/tune-schema';
+import { TUNE_FIELD_GROUPS } from '~/data/tune-value-fields';
+
+type Props = { initial: TuneValues };
+const { initial } = Astro.props;
+
+function getInitial(path: string): number {
+  return path.split('.').reduce((acc: any, key) => (acc == null ? acc : acc[key]), initial) as number;
+}
+---
+<div data-tune-values-form class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-px bg-line font-mono">
+  {TUNE_FIELD_GROUPS.map((group) => (
+    <div class="bg-bg-card p-4">
+      <div class="text-[10px] text-pink uppercase tracking-wider3 mb-3">{group.legend}</div>
+      <div class="space-y-2">
+        {group.fields.map((f) => {
+          const range = TUNE_VALUE_RANGES[f.range];
+          const initialVal = getInitial(f.path);
+          return (
+            <label class="grid grid-cols-[1fr_auto] gap-2 items-center text-[12px]">
+              <span class="text-text-dim">
+                {f.label}{f.axis && <span class="ml-1 text-text-mute text-[10px]">[{f.axis}]</span>}
+                {f.unit && <span class="ml-1 text-text-dim text-[10px]">{f.unit}</span>}
+              </span>
+              <input
+                type="number"
+                name={`tv.${f.path}`}
+                data-tune-field={f.path}
+                value={initialVal}
+                min={range.min}
+                max={range.max}
+                step={f.step ?? '0.1'}
+                required
+                class="w-20 bg-bg border border-line text-text px-2 py-1 text-right font-mono text-[12px]"
+              />
+            </label>
+          );
+        })}
+      </div>
+    </div>
+  ))}
+</div>
