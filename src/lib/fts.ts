@@ -1,13 +1,11 @@
-// TODO(sprint-3): the `\w` character class is ASCII-only, so CJK characters (e.g. "日産") are
-// stripped by the regex below, producing empty FTS queries. Site is zh-TW — this needs either
-// a Unicode-aware regex (\p{L}\p{N} with the `u` flag) AND an FTS5 tokenizer that segments CJK
-// (e.g. `unicode61` is closer than `simple` but still doesn't word-segment Chinese). For now,
-// CJK queries silently return zero results.
+// CJK note: 'unicode61' FTS5 tokenizer preserves CJK characters but does NOT word-segment Chinese
+// (each char becomes its own token). True Chinese segmentation requires a custom tokenizer; this is
+// the minimum-useful fix for zh-TW users searching by car/tuner names that contain CJK.
 export function sanitizeFtsQuery(query: string): string {
   return query
-    .replace(/[^\w\s-]/g, '')
+    .replace(/[^\p{L}\p{N}\s_-]/gu, '')
     .split(/\s+/)
-    .filter((t) => t.length >= 2)
+    .filter((t) => t.length >= 1)  // dropped from 2 to 1 — single CJK chars are meaningful tokens
     .map((t) => `"${t}"*`)
     .join(' OR ');
 }
