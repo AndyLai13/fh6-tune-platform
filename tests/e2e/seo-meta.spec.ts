@@ -29,5 +29,5 @@ test('tune detail passes custom ogImage and canonical', async ({ page }) => {
 
 test('Plausible script absent when PLAUSIBLE_DOMAIN unset (dev default)', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('script[data-domain]')).toHaveCount(0);
+  await expect(page.locator('script[src*="plausible.io"]')).toHaveCount(0);
 });

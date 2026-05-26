@@ -15,6 +15,7 @@ declare module 'cloudflare:workers' {
     TURNSTILE_SECRET_KEY: string;
     IP_HASH_SALT: string;
     EDIT_COOKIE_SECRET: string;
+    PLAUSIBLE_DOMAIN?: string;
   }
   export const env: Env;
 }

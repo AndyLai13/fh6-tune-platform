@@ -20,7 +20,7 @@ const {
   ogType = 'website',
 } = Astro.props;
 
-const plausibleDomain = (env as unknown as { PLAUSIBLE_DOMAIN?: string }).PLAUSIBLE_DOMAIN;
+const plausibleDomain = env.PLAUSIBLE_DOMAIN;
 
 const origin = `${Astro.url.protocol}//${Astro.url.host}`;
 const absolute = (p: string) => (p.startsWith('http') ? p : `${origin}${p}`);
