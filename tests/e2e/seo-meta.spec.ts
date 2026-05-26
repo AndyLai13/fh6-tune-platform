@@ -26,3 +26,8 @@ test('tune detail passes custom ogImage and canonical', async ({ page }) => {
   await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /\S/);
   await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', /\S/);
 });
+
+test('Plausible script absent when PLAUSIBLE_DOMAIN unset (dev default)', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('script[data-domain]')).toHaveCount(0);
+});

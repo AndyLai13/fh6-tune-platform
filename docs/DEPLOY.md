@@ -136,3 +136,15 @@ npx wrangler pages deployment rollback <deployment-id> --project-name=fh6-tune-p
 ```
 
 D1 schema rollbacks have to be done manually with a reverse migration.
+
+## Analytics (optional)
+
+Set the `PLAUSIBLE_DOMAIN` env var in production to enable Plausible analytics:
+
+```bash
+echo "touge.gg" | npx wrangler secret put PLAUSIBLE_DOMAIN
+```
+
+When set, `<script defer data-domain="touge.gg" src="https://plausible.io/js/script.js">` is injected on every page. When unset (dev default), no analytics script loads.
+
+Plausible is privacy-respecting: no cookies, no PII, no cross-site tracking. Disclosed in `/privacy`.
