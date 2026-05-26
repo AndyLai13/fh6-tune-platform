@@ -36,6 +36,10 @@ test('tune detail loads with OG image meta and JSON-LD', async ({ page }) => {
   expect(res?.status()).toBe(200);
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', new RegExp(`/og/tune/${TUNE_SLUG}\\.svg$`));
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', new RegExp(`/tune/${TUNE_SLUG}$`));
+  // JSON-LD structured data present
+  const jsonLd = await page.locator('script[type="application/ld+json"]').first().textContent();
+  expect(jsonLd).toContain('"@context"');
+  expect(jsonLd).toContain('schema.org');
 });
 
 test('OG image SVG endpoint serves valid SVG', async ({ request }) => {
