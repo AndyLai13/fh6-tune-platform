@@ -148,3 +148,38 @@ echo "touge.gg" | npx wrangler secret put PLAUSIBLE_DOMAIN
 When set, `<script defer data-domain="touge.gg" src="https://plausible.io/js/script.js">` is injected on every page. When unset (dev default), no analytics script loads.
 
 Plausible is privacy-respecting: no cookies, no PII, no cross-site tracking. Disclosed in `/privacy`.
+
+## Post-Deploy Smoke Test
+
+After every production deploy, run the automated smoke suite against the live URL:
+
+```bash
+SMOKE_BASE_URL=https://touge.gg npm run test:smoke
+```
+
+To test against a specific Pages preview URL:
+
+```bash
+SMOKE_BASE_URL=https://<preview-hash>.fh6-tune-platform.pages.dev npm run test:smoke
+```
+
+The suite (`tests/smoke/production.spec.ts`) covers 8 checks:
+
+| # | Test | What it verifies |
+|---|------|-----------------|
+| 1 | homepage loads | HTTP 200 + `<title>` contains `touge.gg` |
+| 2 | /browse loads with tunes | HTTP 200 + at least one `/tune/` link visible |
+| 3 | /sitemap.xml is valid | HTTP 200, XML content-type, contains `<urlset` and `/tracks/` |
+| 4 | /feed.xml is valid RSS 2.0 | HTTP 200, contains `<rss` and `<channel>` |
+| 5 | tune detail OG + JSON-LD | OG image meta and canonical link present for demo slug |
+| 6 | OG image SVG endpoint | HTTP 200, `image/svg+xml` content-type, body starts with `<svg` |
+| 7 | /privacy and /terms reachable | Both return HTTP 200 |
+| 8 | robots.txt advertises sitemap | Contains `Sitemap:` pointing to `sitemap.xml` |
+
+The default tune slug used by tests 5–6 is `toyota-supra-mk4-1994-demo04` (seeded in `scripts/demo-tunes.sql`). Override with:
+
+```bash
+SMOKE_TUNE_SLUG=your-slug SMOKE_BASE_URL=https://touge.gg npm run test:smoke
+```
+
+All 8 tests must pass before marking a deploy stable. Traces for any failures are saved under `test-results/` for debugging.
