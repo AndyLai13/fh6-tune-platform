@@ -1,0 +1,55 @@
+---
+import Base from '~/layouts/Base.astro';
+---
+<Base title="隱私權政策" description="touge.gg 隱私權政策 — 我們不存帳號、不存 email、IP 只存每日雜湊。" canonical="/privacy">
+  <section class="px-6 py-12 max-w-3xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-3">＞ PRIVACY</div>
+    <h1 class="text-[40px] font-extrabold mb-6">隱私權政策</h1>
+
+    <div class="space-y-5 text-[15px] leading-relaxed text-text-soft">
+      <p class="text-text-mute text-[13px]">最後更新：2026-05-26</p>
+
+      <h2 class="text-[22px] font-bold pt-4">我們收集什麼</h2>
+      <ul class="list-disc list-inside space-y-1.5">
+        <li><strong>調校內容</strong>：你上傳的調校碼、數值、暱稱、描述、評分、評論——這些公開可見。</li>
+        <li><strong>IP 雜湊</strong>：每次寫入操作（上傳、評論、檢舉）會把你的 IP 過 daily salt 雜湊後存 32 字元字串，用來防濫用。原始 IP 不存。</li>
+        <li><strong>編輯密碼雜湊</strong>：你上傳調校時設的密碼會用 bcrypt 雜湊後存，僅用於驗證你修改自己的調校。</li>
+      </ul>
+
+      <h2 class="text-[22px] font-bold pt-4">我們不收集</h2>
+      <ul class="list-disc list-inside space-y-1.5">
+        <li>帳號、email、姓名、電話、地址</li>
+        <li>原始 IP（只存雜湊）</li>
+        <li>第三方追蹤 cookie</li>
+        <li>跨站行為廣告</li>
+      </ul>
+
+      <h2 class="text-[22px] font-bold pt-4">分析統計</h2>
+      <p>
+        我們用 <a href="https://plausible.io" class="text-cyan" rel="noopener noreferrer" target="_blank">Plausible Analytics</a> 收集匿名瀏覽數據（頁面瀏覽量、來源、國家）。Plausible 不使用 cookie、不識別個人、不追蹤跨站行為。如果你的瀏覽器啟用了 Do Not Track，我們會尊重它。
+      </p>
+
+      <h2 class="text-[22px] font-bold pt-4">你的權利</h2>
+      <ul class="list-disc list-inside space-y-1.5">
+        <li><strong>編輯/刪除你的調校</strong>：用你設的密碼到 <a href="/upload" class="text-cyan">/upload</a> 頁面找編輯入口</li>
+        <li><strong>下架請求</strong>：忘記密碼或要求他人的調校下架——透過 <a href="/about" class="text-cyan">關於頁</a> 的聯絡方式來信，24 小時內處理</li>
+        <li><strong>檢舉</strong>：任何調校或評論底下都有「檢舉」按鈕</li>
+      </ul>
+
+      <h2 class="text-[22px] font-bold pt-4">資料儲存位置</h2>
+      <p>
+        資料存於 Cloudflare D1（SQLite，全球邊緣副本）與 Cloudflare KV。我們不把資料賣給或分享給第三方。
+      </p>
+
+      <h2 class="text-[22px] font-bold pt-4">變更</h2>
+      <p class="text-text-mute text-[13px]">
+        本政策若有重大變更會在首頁公告。歷史版本可在 git 上看到（本站開源）。
+      </p>
+    </div>
+
+    <div class="mt-10 pt-6 border-t border-line flex gap-3">
+      <a href="/" class="bg-cyan text-bg px-5 py-2.5 font-mono font-bold uppercase tracking-wider2 no-underline">回首頁</a>
+      <a href="/terms" class="border border-line text-text px-5 py-2.5 font-mono font-bold uppercase tracking-wider2 no-underline">服務條款</a>
+    </div>
+  </section>
+</Base>
