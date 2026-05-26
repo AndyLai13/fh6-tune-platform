@@ -6,9 +6,7 @@ import { renderTuneOgSvg } from '~/lib/og-svg';
 export const prerender = false;
 
 export const GET: APIRoute = async ({ params }) => {
-  const raw = params.slug!;
-  // Astro may include the .svg extension in the param depending on the route
-  const slug = raw.replace(/\.svg$/, '');
+  const slug = params.slug!;
   const tune = await getTuneBySlug(env.DB, slug);
   if (!tune) {
     return new Response('Not found', { status: 404 });
