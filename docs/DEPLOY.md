@@ -1,12 +1,14 @@
-# Deploying touge.gg to Cloudflare Pages
+# Deploying touge.gg to Cloudflare Workers
 
 First-time setup ~30 minutes. Subsequent deploys ~2 minutes.
 
+> **Note:** Despite the project name including "tune-platform", we deploy as a Cloudflare **Worker** (not a Pages project). Astro's `@astrojs/cloudflare` v13+ adapter is Workers-first; trying `wrangler pages deploy` errors with `ASSETS is reserved in Pages projects`.
+
 ## Prerequisites
 
-- Cloudflare account (free tier is fine)
+- Cloudflare account (free tier is fine — Workers free tier = 100k req/day)
 - `wrangler` CLI authed: `npx wrangler login`
-- A registered domain (or use the free `*.pages.dev` URL)
+- A registered domain (optional — the free `*.workers.dev` URL works for launch validation)
 
 ## 1. Create the production D1 database
 
@@ -14,24 +16,16 @@ First-time setup ~30 minutes. Subsequent deploys ~2 minutes.
 npx wrangler d1 create fh6-tune-platform-prod
 ```
 
-Copy the `database_id` from the output. Update `wrangler.toml`:
+Copy the `database_id` from the output, then update `wrangler.toml`'s top-level `[[d1_databases]]` block to point at it (see Step 2.5).
 
-```toml
-[[d1_databases]]
-binding = "DB"
-database_name = "fh6-tune-platform-prod"
-database_id = "<paste-the-id-here>"
-```
-
-Apply migrations to production:
+Apply all migrations to production:
 
 ```bash
 npx wrangler d1 execute fh6-tune-platform-prod --remote --file=migrations/0001_initial_schema.sql
 npx wrangler d1 execute fh6-tune-platform-prod --remote --file=migrations/0002_seed_cars_tracks.sql
 npx wrangler d1 execute fh6-tune-platform-prod --remote --file=migrations/0003_fts_car_columns.sql
+npx wrangler d1 execute fh6-tune-platform-prod --remote --file=migrations/0004_fts_unicode61.sql
 ```
-
-(Skip `scripts/demo-tunes.sql` — that's dev seed only.)
 
 ## 2. Create the production KV namespace
 
@@ -39,79 +33,141 @@ npx wrangler d1 execute fh6-tune-platform-prod --remote --file=migrations/0003_f
 npx wrangler kv namespace create KV
 ```
 
-Copy the `id` from output. Update `wrangler.toml`:
+Copy the `id` from output for the next step.
+
+## 2.5. Update `wrangler.toml` with prod IDs
+
+Top-level bindings are used for production deploys. Local dev (`wrangler dev` / Astro `platformProxy`) emulates storage in `.wrangler/state/` regardless of these IDs, so this won't pollute local development.
 
 ```toml
+name = "fh6-tune-platform"
+compatibility_date = "2026-05-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fh6-tune-platform-prod"
+database_id = "<paste-D1-id>"
+
 [[kv_namespaces]]
 binding = "KV"
-id = "<paste-the-id-here>"
+id = "<paste-KV-id>"
+
+# Astro's Cloudflare adapter auto-provisions a SESSION KV namespace.
+# After the first deploy attempt creates it, list namespaces and paste the ID here:
+#   npx wrangler kv namespace list
+[[kv_namespaces]]
+binding = "SESSION"
+id = "<paste-SESSION-id-after-first-deploy>"
 ```
 
-## 3. Set up Turnstile
+## 3. Set up Turnstile (anti-spam for upload/review/report)
 
-1. Go to https://dash.cloudflare.com → Turnstile → "Add site"
-2. Domain: your prod domain (or `*.pages.dev` for the free subdomain)
-3. Widget type: Managed
-4. Copy the **site key** and **secret key**
-5. Set them:
+1. Go to https://dash.cloudflare.com → Turnstile → click **Add widget**
+2. **Widget name**: anything (e.g. `fh6-tune-platform`)
+3. **Hostnames**: your deploy URL host (e.g. `fh6-tune-platform.<account>.workers.dev`) — no `https://`, no trailing slash
+4. **Widget mode**: Managed
+5. Click Create → copy **Site key** (public) and **Secret key** (private)
+
+Set the secret key on the Worker (`echo | wrangler` form works in non-TTY shells):
 
 ```bash
-npx wrangler secret put TURNSTILE_SECRET_KEY
-# (paste the secret key from Turnstile dashboard when prompted)
+echo "<your-turnstile-secret-key>" | npx wrangler secret put TURNSTILE_SECRET_KEY
 ```
 
-The **public** site key gets injected at build time via env var. Set it in the Cloudflare Pages project dashboard:
-- Project → Settings → Environment variables → Production
-- Add `PUBLIC_TURNSTILE_SITE_KEY` = `<your site key>`
+Set the public site key as a build-time env var via `.env.production` (gitignored):
+
+```bash
+echo "PUBLIC_TURNSTILE_SITE_KEY=<your-site-key>" > .env.production
+```
+
+Astro/Vite picks this up automatically when building in production mode (`astro build`).
 
 ## 4. Set remaining secrets
 
-```bash
-# Generate strong random values:
-openssl rand -hex 32  # use output for IP_HASH_SALT
-openssl rand -hex 32  # use output for EDIT_COOKIE_SECRET
+Generate strong random values:
 
-npx wrangler secret put IP_HASH_SALT
-npx wrangler secret put EDIT_COOKIE_SECRET
+```bash
+openssl rand -hex 32  # for IP_HASH_SALT
+openssl rand -hex 32  # for EDIT_COOKIE_SECRET
 ```
+
+Set them via echo pipe (works in non-TTY):
+
+```bash
+echo "<paste-the-IP-hash-salt>" | npx wrangler secret put IP_HASH_SALT
+echo "<paste-the-edit-cookie-secret>" | npx wrangler secret put EDIT_COOKIE_SECRET
+```
+
+Verify all 3 secrets are set:
+
+```bash
+npx wrangler secret list
+```
+
+Expected output lists `IP_HASH_SALT`, `EDIT_COOKIE_SECRET`, `TURNSTILE_SECRET_KEY`.
 
 ## 5. Build and deploy
 
 ```bash
+rm -rf dist .wrangler/deploy   # clear stale artifacts
 npm run build
-npx wrangler pages deploy ./dist --project-name=fh6-tune-platform
+npx wrangler deploy
 ```
 
-(First deploy will prompt you to create the Pages project — accept defaults.)
+(First deploy will auto-create the Worker. On the very first attempt, Astro will also auto-provision the `SESSION` KV namespace — get its ID via `wrangler kv namespace list` and paste it into `wrangler.toml` per Step 2.5, then re-run `npm run build && npx wrangler deploy`.)
 
-## 6. Verify
+The output prints the live URL, e.g. `https://fh6-tune-platform.<account>.workers.dev`.
 
-After deploy completes, visit the printed `*.pages.dev` URL and walk through:
+## 6. Seed launch content (optional but recommended)
 
-- [ ] Homepage loads, shows 0 tunes (prod DB is empty until first upload)
-- [ ] `/browse` shows empty state
-- [ ] `/upload` form renders with all 51 cars in dropdown
-- [ ] Upload a test tune — confirm it appears at `/tune/{slug}`
-- [ ] `/tune/{slug}` review form: submit a 5-star review
-- [ ] `/tune/{slug}` copy share code → download_count should increment
-- [ ] `/browse?q=<car-name>` returns results
-- [ ] `/404-fake-route` returns HTTP 404 with branded page
-- [ ] `/about` renders
+To give first visitors something to look at — and to make the smoke test's tune-detail / OG-image checks pass — apply the demo tunes to production:
+
+```bash
+npx wrangler d1 execute fh6-tune-platform-prod --remote --file=scripts/demo-tunes.sql
+```
+
+The 5 "authorized contributor" demo tunes are explicitly labeled `[示範]` in their descriptions — clearly distinguishable from real user content. Replace these as real authors approve their submissions through the [`SEED_PERMISSION.md`](SEED_PERMISSION.md) DM flow.
+
+## 7. Update `public/robots.txt`
+
+The sitemap line is hardcoded. Set it to your real production URL before deploying:
+
+```
+Sitemap: https://<your-host>/sitemap.xml
+```
+
+Rebuild + redeploy after editing.
+
+## 8. Verify
+
+Run the production smoke test against the live URL:
+
+```bash
+SMOKE_BASE_URL=https://<your-host> npm run test:smoke
+```
+
+All 8 tests should pass. See the [Post-Deploy Smoke Test](#post-deploy-smoke-test) section at the bottom for what each test verifies.
+
+Also walk through the manual checklist for upload/review/report (these aren't in the smoke suite because they require Turnstile interaction):
+
+- [ ] `/upload` form renders, Turnstile widget appears (not "demo mode" placeholder)
+- [ ] Upload a test tune → confirm it appears at `/tune/{slug}`
+- [ ] `/tune/{slug}` review form: submit a 5-star review with Turnstile passed
+- [ ] `/tune/{slug}` copy share code → `download_count` increments
 - [ ] Report dialog opens on tune detail and on review cards
 
-## 7. Custom domain (optional)
+## 9. Custom domain (optional)
 
-Pages → your project → Custom domains → Add. Follow the DNS instructions.
+Cloudflare dashboard → Workers & Pages → fh6-tune-platform → Settings → Triggers → Custom Domains → Add Custom Domain. Follow the DNS instructions for your registrar.
+
+Add the custom domain as a second hostname in your Turnstile widget (Step 3) so anti-spam keeps working on both URLs.
 
 ## Subsequent deploys
 
-After the first setup:
-
 ```bash
-npm run build && npx wrangler pages deploy ./dist --project-name=fh6-tune-platform
+npm run build && npx wrangler deploy
 ```
-
-That's it.
 
 ## Migrating schema changes to prod
 
@@ -128,11 +184,11 @@ Always test the migration against local D1 (`--local`) first.
 If a deploy breaks prod:
 
 ```bash
-# List recent deploys
-npx wrangler pages deployment list --project-name=fh6-tune-platform
+# List recent versions
+npx wrangler deployments list
 
-# Promote a previous deploy
-npx wrangler pages deployment rollback <deployment-id> --project-name=fh6-tune-platform
+# Roll back to a previous version
+npx wrangler rollback <version-id>
 ```
 
 D1 schema rollbacks have to be done manually with a reverse migration.
@@ -142,10 +198,10 @@ D1 schema rollbacks have to be done manually with a reverse migration.
 Set the `PLAUSIBLE_DOMAIN` env var in production to enable Plausible analytics:
 
 ```bash
-echo "touge.gg" | npx wrangler secret put PLAUSIBLE_DOMAIN
+echo "<your-domain>" | npx wrangler secret put PLAUSIBLE_DOMAIN
 ```
 
-When set, `<script defer data-domain="touge.gg" src="https://plausible.io/js/script.js">` is injected on every page. When unset (dev default), no analytics script loads.
+When set, `<script defer data-domain="<your-domain>" src="https://plausible.io/js/script.js">` is injected on every page. When unset (dev default), no analytics script loads.
 
 Plausible is privacy-respecting: no cookies, no PII, no cross-site tracking. Disclosed in `/privacy`.
 
@@ -154,13 +210,13 @@ Plausible is privacy-respecting: no cookies, no PII, no cross-site tracking. Dis
 After every production deploy, run the automated smoke suite against the live URL:
 
 ```bash
-SMOKE_BASE_URL=https://touge.gg npm run test:smoke
+SMOKE_BASE_URL=https://<your-host> npm run test:smoke
 ```
 
-To test against a specific Pages preview URL:
+To test against a different host or override the demo slug:
 
 ```bash
-SMOKE_BASE_URL=https://<preview-hash>.fh6-tune-platform.pages.dev npm run test:smoke
+SMOKE_BASE_URL=https://<other-host> SMOKE_TUNE_SLUG=<existing-slug> npm run test:smoke
 ```
 
 The suite (`tests/smoke/production.spec.ts`) covers 8 checks:
@@ -176,10 +232,6 @@ The suite (`tests/smoke/production.spec.ts`) covers 8 checks:
 | 7 | /privacy and /terms reachable | Both return HTTP 200 |
 | 8 | robots.txt advertises sitemap | Contains `Sitemap:` pointing to `sitemap.xml` |
 
-The default tune slug used by tests 5–6 is `toyota-supra-mk4-1994-demo04` (seeded in `scripts/demo-tunes.sql`). Override with:
-
-```bash
-SMOKE_TUNE_SLUG=your-slug SMOKE_BASE_URL=https://touge.gg npm run test:smoke
-```
+The default tune slug used by tests 5–6 is `toyota-supra-mk4-1994-demo04` (seeded by `scripts/demo-tunes.sql` in Step 6).
 
 All 8 tests must pass before marking a deploy stable. Traces for any failures are saved under `test-results/` for debugging.

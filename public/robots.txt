@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /edit/
-Sitemap: https://touge.gg/sitemap.xml
+Sitemap: https://fh6-tune-platform.badboyandy13.workers.dev/sitemap.xml

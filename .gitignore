@@ -4,5 +4,6 @@ dist/
 .astro/
 .wrangler/
 .env
+.env.production
 .dev.vars
 docs/seed-contributors.md
