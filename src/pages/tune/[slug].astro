@@ -24,7 +24,12 @@ const values = JSON.parse(tune.tune_values);
 const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 0;
 ---
 
-<Base title={`${tune.name} — ${car?.year} ${car?.make} ${car?.model}`} description={tune.description?.slice(0, 160) ?? ''}>
+<Base
+  title={`${tune.name} — ${car?.year} ${car?.make} ${car?.model}`}
+  description={tune.description?.slice(0, 160) ?? `${tune.tune_type} 調校，${tune.pi_class} 級。`}
+  canonical={`/tune/${tune.slug}`}
+  ogImage={`/og/tune/${tune.slug}.svg`}
+  ogType="article">
   <section class="px-6 py-8 max-w-6xl mx-auto">
     <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 md:gap-8 items-start">
       <div>

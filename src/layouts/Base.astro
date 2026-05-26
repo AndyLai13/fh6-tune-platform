@@ -2,8 +2,28 @@
 import '~/styles/global.css';
 import Header from '~/components/Header.astro';
 import Footer from '~/components/Footer.astro';
-type Props = { title: string; description?: string };
-const { title, description = 'Forza Horizon 6 調校資料庫。' } = Astro.props;
+type Props = {
+  title: string;
+  description?: string;
+  /** Path-only (e.g. `/tune/foo`) or absolute URL. Defaults to current request URL. */
+  canonical?: string;
+  /** Path-only or absolute URL. Defaults to `/og-default.svg`. */
+  ogImage?: string;
+  ogType?: 'website' | 'article';
+};
+const {
+  title,
+  description = 'Forza Horizon 6 調校資料庫。',
+  canonical,
+  ogImage = '/og-default.svg',
+  ogType = 'website',
+} = Astro.props;
+
+const origin = `${Astro.url.protocol}//${Astro.url.host}`;
+const absolute = (p: string) => (p.startsWith('http') ? p : `${origin}${p}`);
+const canonicalUrl = canonical ? absolute(canonical) : absolute(Astro.url.pathname);
+const ogImageUrl = absolute(ogImage);
+const ogTitle = title.includes('touge.gg') ? title : `${title} — touge.gg`;
 ---
 <!doctype html>
 <html lang="zh-TW">
@@ -12,6 +32,21 @@ const { title, description = 'Forza Horizon 6 調校資料庫。' } = Astro.prop
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{title} — touge.gg</title>
   <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalUrl} />
+
+  <meta property="og:type" content={ogType} />
+  <meta property="og:title" content={ogTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:image" content={ogImageUrl} />
+  <meta property="og:site_name" content="touge.gg" />
+  <meta property="og:locale" content="zh_TW" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={ogTitle} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImageUrl} />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
