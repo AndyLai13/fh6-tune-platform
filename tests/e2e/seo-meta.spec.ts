@@ -21,4 +21,8 @@ test('tune detail passes custom ogImage and canonical', async ({ page }) => {
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/tune\/toyota-supra-mk4-1994-demo04$/);
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /\/og\/tune\/toyota-supra-mk4-1994-demo04\.svg$/);
   await expect(page.locator('meta[property="og:type"]')).toHaveAttribute('content', 'article');
+
+  // Description should reflect the tune (either real description prefix or the type/PI fallback)
+  await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /\S/);
+  await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', /\S/);
 });
