@@ -8,7 +8,7 @@ type Props = {
   carModel: string;
   piClass: string;
   tuneType: string;
-  drivetrain: string;
+  drivetrain: string | null;
   rating: number;
   downloads: number;
   authorHandle: string;
@@ -23,7 +23,7 @@ const ratingColor = accent === 'cyan' ? 'text-cyan' : 'text-pink';
   <div class:list={['absolute top-0 left-0 w-[3px] h-full', accentClass]}></div>
   <div class="relative z-10 pointer-events-none">
     <div class="flex justify-between items-start mb-3">
-      <div class="font-mono text-[10px] text-text-dim uppercase tracking-wider2">{piClass} · {tuneType.toUpperCase()} · {drivetrain}</div>
+      <div class="font-mono text-[10px] text-text-dim uppercase tracking-wider2">{piClass} · {tuneType.toUpperCase()}{drivetrain && ` · ${drivetrain}`}</div>
       <div class:list={['font-mono text-[11px]', ratingColor]}>★ {rating.toFixed(1)}</div>
     </div>
     <div class="text-[15px] font-bold leading-tight mb-1 text-text">{name}</div>

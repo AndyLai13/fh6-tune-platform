@@ -2,7 +2,7 @@ type TuneForOg = {
   name: string;
   tune_type: string;
   pi_class: string;
-  pi_score: number;
+  pi_score: number | null;
   author_handle: string;
 };
 
@@ -27,7 +27,9 @@ export function renderTuneOgSvg(tune: TuneForOg, car: CarForOg | null | undefine
   const name = xmlEscape(truncate(tune.name, 28));
   const carText = xmlEscape(truncate(carLine, 36));
   const typeText = xmlEscape(tune.tune_type.toUpperCase());
-  const piText = xmlEscape(`${tune.pi_class} · ${tune.pi_score}`);
+  const piText = xmlEscape(
+    tune.pi_score === null ? tune.pi_class : `${tune.pi_class} · ${tune.pi_score}`
+  );
   const author = xmlEscape(`@${tune.author_handle}`);
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">

@@ -5,7 +5,7 @@ import { hashEditPassword, validatePasswordStrength } from '~/lib/auth';
 import { makeTuneSlug } from '~/lib/slug';
 import { validateTuneValues } from '~/lib/tune-values';
 import { checkRateLimit } from '~/lib/rate-limit';
-import { getCarById, insertTune, attachTracks, listTunes } from '~/lib/db';
+import { getCarById, insertTune, attachTracks, listTunes, type TuneType, type PiClass, type Drivetrain } from '~/lib/db';
 import { env } from 'cloudflare:workers';
 
 export const prerender = false;
@@ -55,6 +55,19 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const tv = validateTuneValues(body.tune_values);
   if (!tv.ok) return Response.json({ error: 'invalid_tune_values', details: tv.errors }, { status: 400 });
 
+  const TUNE_TYPES = ['touge', 'drift', 'grip', 'drag', 'rally', 'offroad'] as const;
+  const PI_CLASSES = ['D', 'C', 'B', 'A', 'S1', 'S2', 'R', 'X'] as const;
+  const DRIVETRAINS = ['RWD', 'AWD', 'FWD'] as const;
+  if (!TUNE_TYPES.includes(body.tune_type as TuneType)) {
+    return Response.json({ error: 'invalid_tune_type' }, { status: 400 });
+  }
+  if (!PI_CLASSES.includes(body.pi_class as PiClass)) {
+    return Response.json({ error: 'invalid_pi_class' }, { status: 400 });
+  }
+  if (!DRIVETRAINS.includes(body.drivetrain as Drivetrain)) {
+    return Response.json({ error: 'invalid_drivetrain' }, { status: 400 });
+  }
+
   const passwordHash = await hashEditPassword(body.edit_password);
   const slug = makeTuneSlug(body.name, car.slug);
 
@@ -65,14 +78,15 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       name: body.name.slice(0, 120),
       share_code: body.share_code.slice(0, 32),
       car_id: car.id,
-      tune_type: body.tune_type,
-      pi_class: body.pi_class,
+      tune_type: body.tune_type as TuneType,
+      pi_class: body.pi_class as PiClass,
       pi_score: body.pi_score,
-      drivetrain: body.drivetrain,
+      drivetrain: body.drivetrain as Drivetrain,
       power_hp: body.power_hp ?? null,
       weight_lb: body.weight_lb ?? null,
       description: body.description?.slice(0, 4000) ?? null,
       tune_values: JSON.stringify(tv.data),
+      source_url: null,
       author_handle: (body.author_handle || 'anonymous').slice(0, 40),
       edit_password_hash: passwordHash,
       ip_hash: ipHash

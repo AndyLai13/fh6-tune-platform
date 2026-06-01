@@ -129,7 +129,32 @@ npx wrangler d1 execute fh6-tune-platform-prod --remote --file=scripts/demo-tune
 
 The 5 "authorized contributor" demo tunes are explicitly labeled `[示範]` in their descriptions — clearly distinguishable from real user content. Replace these as real authors approve their submissions through the [`SEED_PERMISSION.md`](SEED_PERMISSION.md) DM flow.
 
-## 7. Update `public/robots.txt`
+## 6.5. Onboarding authorized seed contributors (share-code-only mode)
+
+When a Bahamut/Reddit/etc. contributor grants permission to publish a pack of share codes but cannot provide per-tune detail values (suspension, gearing, etc.), apply the share-code-only schema migration + their generated SQL pack:
+
+```bash
+# One-time schema relaxation (allows tune_values / pi_score / drivetrain to be NULL, adds 'R' class + source_url column)
+npx wrangler d1 execute fh6-tune-platform-prod --remote --file=migrations/0005_share_code_only_mode.sql
+
+# Seed any new cars the pack references
+npx wrangler d1 execute fh6-tune-platform-prod --remote --file=migrations/0006_seed_more_cars.sql
+
+# Apply the contributor's pack (regenerate via `npx tsx scripts/import-<handle>-pack-<id>.ts` if needed)
+npx wrangler d1 execute fh6-tune-platform-prod --remote --file=scripts/wusyong-pack-7400.sql
+```
+
+The order matters: **0005 → 0006 → pack SQL**. 0006 must come after 0005 (cars seed is independent of the schema rebuild, but applying it first leaves the rebuild trigger-recreation window in a slightly racier state — safer to do schema first). The pack SQL references car ids inserted by 0006, so it must come last.
+
+After applying, verify:
+
+```bash
+npx wrangler d1 execute fh6-tune-platform-prod --remote --command="SELECT slug, share_code, pi_class FROM tunes WHERE author_handle='wusyong0403' ORDER BY id;"
+```
+
+Should print 22 rows.
+
+
 
 The sitemap line is hardcoded. Set it to your real production URL before deploying:
 

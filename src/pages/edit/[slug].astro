@@ -11,13 +11,22 @@ if (!tune) {
   Astro.response.status = 404;
   return Astro.rewrite('/404');
 }
-const values = JSON.parse(tune.tune_values);
+const values = tune.tune_values ? JSON.parse(tune.tune_values) : null;
+const shareCodeOnly = tune.tune_values === null;
 ---
 
 <Base title={`編輯 ${tune.name}`}>
   <section class="px-6 py-8 max-w-3xl mx-auto">
     <h1 class="text-[26px] font-bold mb-5">編輯調校</h1>
-    <form id="edit-form" data-slug={slug} class="space-y-4">
+    {shareCodeOnly && (
+      <div data-share-code-only-edit-notice class="mb-5 p-4 bg-bg-card border-l-[3px] border-cyan">
+        <div class="font-mono text-[10px] text-cyan tracking-wider2 mb-1.5">＞ 僅分享碼模式</div>
+        <p class="leading-relaxed text-text-soft text-[13px] m-0">
+          此調校為僅分享碼模式，目前僅支援編輯 name / description / share_code（詳細數值欄位不適用）。
+        </p>
+      </div>
+    )}
+    <form id="edit-form" data-slug={slug} data-share-code-only={shareCodeOnly ? 'true' : 'false'} class="space-y-4">
       <label class="block">
         <span class="label-mono">編輯密碼</span>
         <input type="password" name="edit_password" required minlength="6" class="mt-1.5 w-full bg-bg border border-line text-text p-2 font-mono" />
@@ -30,12 +39,14 @@ const values = JSON.parse(tune.tune_values);
         <span class="label-mono">說明</span>
         <textarea name="description" rows="5" class="mt-1.5 w-full bg-bg border border-line text-text p-2.5">{tune.description ?? ''}</textarea>
       </label>
-      <fieldset class="block">
-        <span class="label-mono">調校數值</span>
-        <div class="mt-2">
-          <TuneValuesForm initial={values} />
-        </div>
-      </fieldset>
+      {values && (
+        <fieldset class="block">
+          <span class="label-mono">調校數值</span>
+          <div class="mt-2">
+            <TuneValuesForm initial={values} />
+          </div>
+        </fieldset>
+      )}
       <div class="flex gap-2.5 justify-end">
         <button type="submit" class="bg-cyan text-bg px-5 py-2.5 font-mono font-bold border-0">儲存</button>
         <button type="button" id="delete-btn" class="bg-transparent border border-pink text-pink px-5 py-2.5 font-mono">刪除調校</button>
@@ -51,17 +62,22 @@ const values = JSON.parse(tune.tune_values);
     const status = document.getElementById('edit-status') as HTMLElement;
     const slug = form.dataset.slug!;
 
+    const shareCodeOnly = form.dataset.shareCodeOnly === 'true';
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!form.reportValidity()) return;
       const fd = new FormData(form);
+      const updates: Record<string, unknown> = {
+        name: fd.get('name'),
+        description: fd.get('description')
+      };
+      if (!shareCodeOnly) {
+        updates.tune_values = buildTuneValues(fd);
+      }
       const body = {
         edit_password: fd.get('edit_password'),
-        updates: {
-          name: fd.get('name'),
-          description: fd.get('description'),
-          tune_values: buildTuneValues(fd)
-        }
+        updates
       };
       const res = await fetch(`/api/tunes/${slug}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const data = await res.json();

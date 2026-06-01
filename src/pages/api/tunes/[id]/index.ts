@@ -10,7 +10,10 @@ export const GET: APIRoute = async ({ params }) => {
   const tune = await getTuneBySlug(env.DB, params.id!);
   if (!tune) return new Response('not_found', { status: 404 });
   const { edit_password_hash: _p, ip_hash: _i, tune_values, ...rest } = tune;
-  return Response.json({ ...rest, tune_values: JSON.parse(tune_values) });
+  return Response.json({
+    ...rest,
+    tune_values: tune_values ? JSON.parse(tune_values) : null
+  });
 };
 
 export const PATCH: APIRoute = async ({ params, request, cookies }) => {

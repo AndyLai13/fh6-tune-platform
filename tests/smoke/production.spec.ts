@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 const TUNE_SLUG = process.env.SMOKE_TUNE_SLUG ?? 'toyota-supra-mk4-1994-demo04';
+const SHARE_CODE_SLUG = process.env.SMOKE_SHARE_CODE_SLUG ?? 'nissan-silvia-ks-1989-wusyong-c-touge';
 
 test('homepage loads', async ({ page }) => {
   const res = await page.goto('/');
@@ -62,4 +63,13 @@ test('robots.txt advertises sitemap', async ({ request }) => {
   expect(res.status()).toBe(200);
   const body = await res.text();
   expect(body).toMatch(/Sitemap:\s*https?:\/\/[^\s]+sitemap\.xml/);
+});
+
+test('share-code-only tune detail page shows source link', async ({ page }) => {
+  const res = await page.goto(`/tune/${SHARE_CODE_SLUG}`);
+  expect(res?.status()).toBe(200);
+  await expect(page.locator('[data-share-code-only-banner]')).toBeVisible();
+  await expect(
+    page.locator('[data-share-code-only-banner] a[href*="forum.gamer.com.tw"]')
+  ).toBeVisible();
 });

@@ -27,6 +27,16 @@ describe('renderTuneOgSvg', () => {
     expect(svg).toContain('&quot;fast&quot;');
   });
 
+  it('omits pi_score when null (share-code-only tunes)', () => {
+    const svg = renderTuneOgSvg(
+      { name: "Silvia K's", tune_type: 'touge', pi_class: 'C', pi_score: null, author_handle: 'wusyong0403' },
+      { year: 1989, make: 'Nissan', model: "Silvia K's" }
+    );
+    expect(svg).toContain('C');
+    expect(svg).not.toMatch(/C · /);
+    expect(svg).toContain('@wusyong0403');
+  });
+
   it('truncates very long tune names to fit', () => {
     const longName = '超級長的調校名稱'.repeat(20);
     const svg = renderTuneOgSvg(

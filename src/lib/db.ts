@@ -1,4 +1,7 @@
-import type { TuneValues } from '~/data/tune-schema';
+export type TuneType = 'touge' | 'drift' | 'grip' | 'drag' | 'rally' | 'offroad';
+export type PiClass = 'D' | 'C' | 'B' | 'A' | 'S1' | 'S2' | 'R' | 'X';
+export type Drivetrain = 'RWD' | 'AWD' | 'FWD';
+export type TuneStatus = 'public' | 'hidden' | 'deleted';
 
 export type TuneRow = {
   id: number;
@@ -6,21 +9,22 @@ export type TuneRow = {
   name: string;
   share_code: string;
   car_id: number;
-  tune_type: string;
-  pi_class: string;
-  pi_score: number;
-  drivetrain: string;
+  tune_type: TuneType;
+  pi_class: PiClass;
+  pi_score: number | null;
+  drivetrain: Drivetrain | null;
   power_hp: number | null;
   weight_lb: number | null;
   description: string | null;
-  tune_values: string;
+  tune_values: string | null;
+  source_url: string | null;
   author_handle: string;
   edit_password_hash: string;
   ip_hash: string;
   rating_sum: number;
   rating_count: number;
   download_count: number;
-  status: string;
+  status: TuneStatus;
   created_at: number;
   updated_at: number;
 };
@@ -144,12 +148,12 @@ export async function insertTune(db: D1Database, input: InsertTuneInput) {
   const result = await db.prepare(`
     INSERT INTO tunes (
       slug, name, share_code, car_id, tune_type, pi_class, pi_score,
-      drivetrain, power_hp, weight_lb, description, tune_values,
+      drivetrain, power_hp, weight_lb, description, tune_values, source_url,
       author_handle, edit_password_hash, ip_hash, status, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'public', ?, ?)
   `).bind(
     input.slug, input.name, input.share_code, input.car_id, input.tune_type, input.pi_class, input.pi_score,
-    input.drivetrain, input.power_hp, input.weight_lb, input.description, input.tune_values,
+    input.drivetrain, input.power_hp, input.weight_lb, input.description, input.tune_values, input.source_url ?? null,
     input.author_handle, input.edit_password_hash, input.ip_hash, now, now
   ).run();
   return result.meta.last_row_id as number;

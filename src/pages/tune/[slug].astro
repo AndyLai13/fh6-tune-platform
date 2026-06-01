@@ -20,8 +20,9 @@ const reviewsResult = await listReviews(env.DB, tune.id, 20);
 const reviews = reviewsResult.results as Array<{ id: number; author_handle: string; rating: number; body: string | null; created_at: number }>;
 const tracksResult = await listTracksForTune(env.DB, tune.id);
 const tracks = (tracksResult.results) as Array<{ name: string; length_km: number | null; region: string | null }>;
-const values = JSON.parse(tune.tune_values);
+const values = tune.tune_values ? JSON.parse(tune.tune_values) : null;
 const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 0;
+const shareCodeOnly = tune.tune_values === null;
 ---
 
 <Base
@@ -33,7 +34,7 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
   <section class="px-6 py-8 max-w-6xl mx-auto">
     <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-6 md:gap-8 items-start">
       <div>
-        <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2.5">＞ {tune.tune_type.toUpperCase()} / {tune.pi_class} / {tune.drivetrain}</div>
+        <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2.5">＞ {tune.tune_type.toUpperCase()} / {tune.pi_class}{tune.drivetrain && ` / ${tune.drivetrain}`}</div>
         <h1 class="text-[28px] md:text-[42px] font-extrabold mb-2 leading-tight">{tune.name}</h1>
         <div class="text-[18px] text-text-mute mb-5">{car?.year} {car?.make} {car?.model}</div>
         <div class="flex gap-5 items-center font-mono text-[12px]">
@@ -48,6 +49,16 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
       </div>
       <ShareCodeBox code={tune.share_code} tuneId={tune.id} tuneSlug={tune.slug} />
     </div>
+
+    {shareCodeOnly && tune.source_url && (
+      <div data-share-code-only-banner class="mt-6 p-5 bg-bg-card border-l-[3px] border-cyan">
+        <div class="font-mono text-[10px] text-cyan tracking-wider2 mb-1.5">＞ 僅分享碼模式</div>
+        <p class="leading-relaxed text-text-soft text-[14px] m-0">
+          作者僅提供分享碼，詳細數值請見原 po 文：
+          <a href={tune.source_url} target="_blank" rel="noopener nofollow" class="text-cyan break-all">{tune.source_url}</a>
+        </p>
+      </div>
+    )}
 
     {tune.description && (
       <div class="mt-6 p-5 bg-bg-card border-l-[3px] border-pink">
@@ -76,10 +87,12 @@ const avgRating = tune.rating_count > 0 ? tune.rating_sum / tune.rating_count : 
     )}
   </section>
 
-  <section class="px-6 pb-12 max-w-6xl mx-auto">
-    <h2 class="text-[24px] font-bold mb-4">全部數值</h2>
-    <TuneValuesGrid values={values} />
-  </section>
+  {values && (
+    <section class="px-6 pb-12 max-w-6xl mx-auto">
+      <h2 class="text-[24px] font-bold mb-4">全部數值</h2>
+      <TuneValuesGrid values={values} />
+    </section>
+  )}
 
   <section class="px-6 pb-12 max-w-6xl mx-auto">
     <h2 class="text-[20px] font-bold mb-4">評論 · {tune.rating_count}</h2>
