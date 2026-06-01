@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const TUNE_SLUG = process.env.SMOKE_TUNE_SLUG ?? 'toyota-supra-mk4-1994-demo04';
+const TUNE_SLUG = process.env.SMOKE_TUNE_SLUG ?? 'bmw-m2-competition-2019-wusyong-a-touge';
 const SHARE_CODE_SLUG = process.env.SMOKE_SHARE_CODE_SLUG ?? 'nissan-silvia-ks-1989-wusyong-c-touge';
 
 test('homepage loads', async ({ page }) => {
