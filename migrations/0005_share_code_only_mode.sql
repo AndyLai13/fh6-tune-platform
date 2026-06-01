@@ -12,8 +12,9 @@
 -- 0003_fts_car_columns.sql + 0004_fts_unicode61.sql — content='', tokenize='unicode61',
 -- same WHEN-clause on the AFTER UPDATE trigger.
 
-PRAGMA foreign_keys=OFF;
-BEGIN TRANSACTION;
+-- D1 wraps multi-statement files atomically; explicit BEGIN TRANSACTION /
+-- COMMIT / PRAGMA foreign_keys are rejected by the remote adapter, so we
+-- rely on the implicit transaction (matches 0001/0003/0004).
 
 -- Drop FTS objects that reference tunes (recreated below)
 DROP TRIGGER IF EXISTS tunes_ai;
@@ -110,6 +111,3 @@ INSERT INTO tunes_fts(rowid, name, description, author_handle, car_make, car_mod
 SELECT t.id, t.name, t.description, t.author_handle, c.make, c.model
 FROM tunes t JOIN cars c ON c.id = t.car_id
 WHERE t.status = 'public';
-
-COMMIT;
-PRAGMA foreign_keys=ON;

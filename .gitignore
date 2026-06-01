@@ -7,3 +7,4 @@ dist/
 .env.production
 .dev.vars
 docs/seed-contributors.md
+backups/
