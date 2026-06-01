@@ -26,7 +26,7 @@ const origin = `${Astro.url.protocol}//${Astro.url.host}`;
 const absolute = (p: string) => (p.startsWith('http') ? p : `${origin}${p}`);
 const canonicalUrl = canonical ? absolute(canonical) : absolute(Astro.url.pathname);
 const ogImageUrl = absolute(ogImage);
-const ogTitle = title.includes('touge.gg') ? title : `${title} — touge.gg`;
+const ogTitle = title.includes('touge') ? title : `${title} — touge`;
 ---
 <!doctype html>
 <html lang="zh-TW">
@@ -46,7 +46,7 @@ const ogTitle = title.includes('touge.gg') ? title : `${title} — touge.gg`;
   <meta property="og:description" content={description} />
   <meta property="og:url" content={canonicalUrl} />
   <meta property="og:image" content={ogImageUrl} />
-  <meta property="og:site_name" content="touge.gg" />
+  <meta property="og:site_name" content="touge" />
   <meta property="og:locale" content="zh_TW" />
 
   <meta name="twitter:card" content="summary_large_image" />

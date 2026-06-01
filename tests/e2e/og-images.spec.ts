@@ -7,7 +7,7 @@ test('GET /og/tune/[slug].svg returns SVG with tune metadata', async ({ request 
   const body = await res.text();
   expect(body).toMatch(/^<svg/);
   expect(body).toContain('Supra');
-  expect(body).toContain('touge.gg');
+  expect(body).toContain('touge');
 });
 
 test('GET /og/tune/unknown-slug.svg returns 404', async ({ request }) => {
@@ -20,5 +20,5 @@ test('GET /og-default.svg returns the default OG image', async ({ request }) => 
   expect(res.status()).toBe(200);
   expect(res.headers()['content-type']).toMatch(/image\/svg\+xml/);
   const body = await res.text();
-  expect(body).toContain('touge.gg');
+  expect(body).toContain('touge');
 });

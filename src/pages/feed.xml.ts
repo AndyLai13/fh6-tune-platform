@@ -37,7 +37,7 @@ export const GET: APIRoute = async ({ url }) => {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>touge.gg</title>
+    <title>touge</title>
     <link>${base}/</link>
     <description>Forza Horizon 6 玩家調校資料庫 · 最新 20 筆調校</description>
     <language>zh-TW</language>

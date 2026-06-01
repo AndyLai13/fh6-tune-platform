@@ -13,7 +13,7 @@ describe('renderTuneOgSvg', () => {
     expect(svg).toContain('RALLY');
     expect(svg).toContain('A · 800');
     expect(svg).toContain('@demo');
-    expect(svg).toContain('touge.gg');
+    expect(svg).toContain('touge');
   });
 
   it('escapes XML-unsafe characters in tune name', () => {
@@ -51,7 +51,7 @@ describe('renderDefaultOgSvg', () => {
   it('returns a 1200x630 SVG with site name', () => {
     const svg = renderDefaultOgSvg();
     expect(svg).toMatch(/^<svg[^>]+width="1200"[^>]+height="630"/);
-    expect(svg).toContain('touge.gg');
+    expect(svg).toContain('touge');
     expect(svg).toContain('Forza Horizon 6');
   });
 });

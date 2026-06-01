@@ -14,7 +14,7 @@ const trending = (trendingResult.results ?? []) as Array<any>;
 const statsRow = await env.DB.prepare("SELECT COUNT(*) AS tunes, COUNT(DISTINCT author_handle) AS tuners, COUNT(DISTINCT car_id) AS cars FROM tunes WHERE status='public'").first<{ tunes: number; tuners: number; cars: number }>();
 ---
 
-<Base title="touge.gg" description="Forza Horizon 6 調校資料庫。">
+<Base title="touge" description="Forza Horizon 6 調校資料庫。">
   <section class="px-6 py-12 max-w-6xl mx-auto">
     <div class="font-mono text-[11px] text-pink tracking-wider3 mb-3.5">＞ FORZA HORIZON 6 / JAPAN</div>
     <h1 class="text-[36px] md:text-[56px] font-extrabold leading-[1.05] mb-4">

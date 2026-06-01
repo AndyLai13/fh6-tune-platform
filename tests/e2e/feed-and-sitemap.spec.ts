@@ -8,7 +8,7 @@ test('/feed.xml returns RSS 2.0 with seeded tune entries', async ({ request }) =
   const body = await res.text();
   expect(body).toContain('<rss version="2.0">');
   expect(body).toContain('<channel>');
-  expect(body).toContain('<title>touge.gg</title>');
+  expect(body).toContain('<title>touge</title>');
 
   // At least one seeded tune appears as an <item>
   expect(body).toContain('<item>');

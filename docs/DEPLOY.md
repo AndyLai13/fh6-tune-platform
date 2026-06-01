@@ -1,4 +1,4 @@
-# Deploying touge.gg to Cloudflare Workers
+# Deploying touge to Cloudflare Workers
 
 First-time setup ~30 minutes. Subsequent deploys ~2 minutes.
 
@@ -248,7 +248,7 @@ The suite (`tests/smoke/production.spec.ts`) covers 8 checks:
 
 | # | Test | What it verifies |
 |---|------|-----------------|
-| 1 | homepage loads | HTTP 200 + `<title>` contains `touge.gg` |
+| 1 | homepage loads | HTTP 200 + `<title>` contains `touge` |
 | 2 | /browse loads with tunes | HTTP 200 + at least one `/tune/` link visible |
 | 3 | /sitemap.xml is valid | HTTP 200, XML content-type, contains `<urlset` and `/tracks/` |
 | 4 | /feed.xml is valid RSS 2.0 | HTTP 200, contains `<rss` and `<channel>` |

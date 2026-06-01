@@ -6,7 +6,7 @@ const SHARE_CODE_SLUG = process.env.SMOKE_SHARE_CODE_SLUG ?? 'nissan-silvia-ks-1
 test('homepage loads', async ({ page }) => {
   const res = await page.goto('/');
   expect(res?.status()).toBe(200);
-  await expect(page).toHaveTitle(/touge\.gg/i);
+  await expect(page).toHaveTitle(/touge/i);
 });
 
 test('/browse loads with tunes', async ({ page }) => {

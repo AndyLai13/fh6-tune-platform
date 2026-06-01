@@ -1,6 +1,8 @@
-# touge.gg — FH6 Tune Database
+# touge — FH6 Tune Database
 
 A community tune-sharing platform for **Forza Horizon 6**. Mandarin-first, optimized for 跑山 (touge) / drift / grip / rally / drag / offroad sharing across Class D–X tunes.
+
+> Codename **touge** — the matching domain (touge.gg / touge.tw) isn't purchased yet; we're running on the Cloudflare `*.workers.dev` URL during the validation window.
 
 **Live:** https://fh6-tune-platform.badboyandy13.workers.dev
 **Status:** Validation phase — 22 authorized tunes from one Bahamut contributor live as of 2026-06-01. Six-month experiment window before deciding on custom domain + paid analytics.
