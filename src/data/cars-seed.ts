@@ -47,7 +47,7 @@ export const carsSeed: CarSeed[] = [
   { year: 2019, make: 'BMW', model: 'M2 Competition', slug: 'bmw-m2-competition-2019' },
   // Porsche
   { year: 1973, make: 'Porsche', model: '911 Carrera RS 2.7', slug: 'porsche-911-carrera-rs-1973' },
-  { year: 2022, make: 'Porsche', model: '911 GT3 RS (992)', slug: 'porsche-911-gt3-rs-992-2022' },
+  { year: 2023, make: 'Porsche', model: '911 GT3 RS (992)', slug: 'porsche-911-gt3-rs-992-2023' },
   { year: 2022, make: 'Porsche', model: 'Cayman GT4 RS', slug: 'porsche-cayman-gt4-rs-2022' },
   // Audi
   { year: 1986, make: 'Audi', model: 'Sport Quattro S1', slug: 'audi-sport-quattro-s1-1986' },

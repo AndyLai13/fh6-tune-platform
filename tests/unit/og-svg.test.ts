@@ -19,7 +19,7 @@ describe('renderTuneOgSvg', () => {
   it('escapes XML-unsafe characters in tune name', () => {
     const svg = renderTuneOgSvg(
       { name: 'GT3 RS <special> & "fast"', tune_type: 'grip', pi_class: 'S1', pi_score: 880, author_handle: 'x' },
-      { year: 2022, make: 'Porsche', model: '911 GT3 RS' }
+      { year: 2023, make: 'Porsche', model: '911 GT3 RS' }
     );
     expect(svg).not.toContain('<special>');
     expect(svg).toContain('&lt;special&gt;');
