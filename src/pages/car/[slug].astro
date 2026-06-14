@@ -1,0 +1,91 @@
+---
+import Base from '~/layouts/Base.astro';
+import TuneCard from '~/components/TuneCard.astro';
+import { getCarBySlug, listTunesForCar } from '~/lib/db';
+import { env } from 'cloudflare:workers';
+
+export const prerender = false;
+
+const slug = Astro.params.slug!;
+const car = await getCarBySlug(env.DB, slug);
+if (!car) {
+  Astro.response.status = 404;
+  return Astro.rewrite('/404');
+}
+
+const tunesResult = await listTunesForCar(env.DB, car.id);
+const tunes = (tunesResult.results ?? []) as Array<{
+  id: number;
+  slug: string;
+  name: string;
+  share_code: string;
+  pi_class: string;
+  tune_type: string;
+  drivetrain: string | null;
+  rating_sum: number;
+  rating_count: number;
+  download_count: number;
+  author_handle: string;
+  car_year: number;
+  car_make: string;
+  car_model: string;
+}>;
+
+const carLabel = `${car.year} ${car.make} ${car.model}`;
+const title = `${carLabel} 調校`;
+const description = tunes.length > 0
+  ? `${carLabel} 的 ${tunes.length} 筆 Forza Horizon 6 社群調校：跑山、甩尾、抓地、拉力。`
+  : `${carLabel} 的 Forza Horizon 6 調校頁面。`;
+
+const origin = `${Astro.url.protocol}//${Astro.url.host}`;
+const canonicalPath = `/car/${car.slug}`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: carLabel,
+  description,
+  url: `${origin}${canonicalPath}`,
+  inLanguage: 'zh-TW',
+  mainEntity: {
+    '@type': 'ItemList',
+    numberOfItems: tunes.length,
+    itemListElement: tunes.slice(0, 10).map((t, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: `${origin}/tune/${t.slug}`,
+      name: t.name,
+    })),
+  },
+};
+---
+<Base title={title} description={description} canonical={canonicalPath} jsonLd={jsonLd}>
+  <section class="px-6 py-10 max-w-6xl mx-auto">
+    <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ CAR</div>
+    <h1 class="text-[36px] md:text-[48px] font-extrabold mb-2">{carLabel}</h1>
+    <div class="font-mono text-[12px] text-text-mute mb-8">
+      Forza Horizon 6 · {tunes.length} 筆社群調校
+    </div>
+
+    <h2 class="text-[20px] font-bold mb-4">所有調校 · {tunes.length}</h2>
+
+    {tunes.length === 0 ? (
+      <div data-empty-state class="bg-bg-card border-l-[3px] border-line p-5">
+        <p class="text-text-mute m-0">
+          這台車還沒有調校上線。<a href="/browse" class="text-cyan">看看其他車</a>。
+        </p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+        {tunes.map((r, i) => (
+          <TuneCard
+            slug={r.slug} name={r.name} shareCode={r.share_code}
+            carYear={r.car_year} carMake={r.car_make} carModel={r.car_model}
+            piClass={r.pi_class} tuneType={r.tune_type} drivetrain={r.drivetrain}
+            rating={r.rating_count > 0 ? r.rating_sum / r.rating_count : 0}
+            downloads={r.download_count} authorHandle={r.author_handle}
+            accent={i % 3 === 1 ? 'pink' : 'cyan'} />
+        ))}
+      </div>
+    )}
+  </section>
+</Base>

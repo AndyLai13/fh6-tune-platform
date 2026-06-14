@@ -11,6 +11,12 @@ type Props = {
   /** Path-only or absolute URL. Defaults to `/og-default.svg`. */
   ogImage?: string;
   ogType?: 'website' | 'article';
+  /** Page language; reflected in `<html lang>` and `og:locale`. */
+  lang?: string;
+  /** Cross-language alternates rendered as `<link rel="alternate" hreflang>`. */
+  hreflangs?: Array<{ lang: string; href: string }>;
+  /** Optional JSON-LD object injected into `<head>`. */
+  jsonLd?: object;
 };
 const {
   title,
@@ -18,9 +24,13 @@ const {
   canonical,
   ogImage = '/og-default.svg',
   ogType = 'website',
+  lang = 'zh-TW',
+  hreflangs = [],
+  jsonLd,
 } = Astro.props;
+const ogLocale = lang.replace('-', '_');
 
-const plausibleDomain = env.PLAUSIBLE_DOMAIN;
+const cfAnalyticsToken = env.CLOUDFLARE_ANALYTICS_TOKEN;
 
 const origin = `${Astro.url.protocol}//${Astro.url.host}`;
 const absolute = (p: string) => (p.startsWith('http') ? p : `${origin}${p}`);
@@ -29,16 +39,17 @@ const ogImageUrl = absolute(ogImage);
 const ogTitle = title.includes('touge') ? title : `${title} — touge`;
 ---
 <!doctype html>
-<html lang="zh-TW">
+<html lang={lang}>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{ogTitle}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonicalUrl} />
+  {hreflangs.map((h) => <link rel="alternate" hreflang={h.lang} href={absolute(h.href)} />)}
 
-  {plausibleDomain && (
-    <script is:inline defer data-domain={plausibleDomain} src="https://plausible.io/js/script.js"></script>
+  {cfAnalyticsToken && (
+    <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={`{"token": "${cfAnalyticsToken}"}`}></script>
   )}
 
   <meta property="og:type" content={ogType} />
@@ -47,12 +58,14 @@ const ogTitle = title.includes('touge') ? title : `${title} — touge`;
   <meta property="og:url" content={canonicalUrl} />
   <meta property="og:image" content={ogImageUrl} />
   <meta property="og:site_name" content="touge" />
-  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:locale" content={ogLocale} />
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={ogTitle} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImageUrl} />
+
+  {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

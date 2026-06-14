@@ -13,6 +13,11 @@ const searchQuery = q.get('q')?.trim() ?? '';
 const limit = 24;
 const offset = q.get('page') ? (Number(q.get('page')) - 1) * limit : 0;
 
+const carSlug = q.get('car') ?? undefined;
+const otherContentFilters = ['q', 'type', 'pi', 'drivetrain', 'min_rating'];
+const onlyCarFilter = !!carSlug && otherContentFilters.every((k) => !q.get(k));
+const canonical = onlyCarFilter ? `/car/${carSlug}` : undefined;
+
 let rows: Array<any>;
 if (searchQuery.length >= 2) {
   const fts = sanitizeFtsQuery(searchQuery);
@@ -20,7 +25,7 @@ if (searchQuery.length >= 2) {
   rows = (r.results ?? []) as Array<any>;
 } else {
   const result = await listTunes(env.DB, {
-    carSlug: q.get('car') ?? undefined,
+    carSlug,
     tuneType: q.get('type') ?? undefined,
     piClass: q.get('pi') ?? undefined,
     drivetrain: q.get('drivetrain') ?? undefined,
@@ -38,7 +43,7 @@ const typeRowsResult = await env.DB.prepare("SELECT tune_type, COUNT(*) AS n FRO
 (typeRowsResult.results as Array<{ tune_type: string; n: number }>).forEach((r) => { counts.type[r.tune_type] = r.n; });
 ---
 
-<Base title="瀏覽調校">
+<Base title="瀏覽調校" canonical={canonical}>
   <section class="px-6 pt-8 max-w-7xl mx-auto">
     <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">
       ＞ {searchQuery ? '搜尋結果' : '瀏覽調校'}

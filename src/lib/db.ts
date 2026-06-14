@@ -60,6 +60,16 @@ export async function listTunesForTrack(db: D1Database, trackId: number) {
   `).bind(trackId).all();
 }
 
+export async function listTunesForCar(db: D1Database, carId: number) {
+  return db.prepare(`
+    SELECT t.*, c.year AS car_year, c.make AS car_make, c.model AS car_model, c.slug AS car_slug
+    FROM tunes t
+    JOIN cars c ON c.id = t.car_id
+    WHERE t.car_id = ? AND t.status = 'public'
+    ORDER BY t.download_count DESC
+  `).bind(carId).all();
+}
+
 export async function listTunesForTuner(db: D1Database, handle: string) {
   return db.prepare(`
     SELECT t.*, c.year AS car_year, c.make AS car_make, c.model AS car_model, c.slug AS car_slug
