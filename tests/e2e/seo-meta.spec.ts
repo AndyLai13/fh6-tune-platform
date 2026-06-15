@@ -27,7 +27,12 @@ test('tune detail passes custom ogImage and canonical', async ({ page }) => {
   await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', /\S/);
 });
 
-test('Plausible script absent when PLAUSIBLE_DOMAIN unset (dev default)', async ({ page }) => {
+test('Cloudflare analytics beacon absent when CLOUDFLARE_ANALYTICS_TOKEN unset (dev default)', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('script[src*="plausible.io"]')).toHaveCount(0);
+  await expect(page.locator('script[src*="cloudflareinsights.com"]')).toHaveCount(0);
+});
+
+test('Google site verification meta absent when GOOGLE_SITE_VERIFICATION unset (dev default)', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('meta[name="google-site-verification"]')).toHaveCount(0);
 });

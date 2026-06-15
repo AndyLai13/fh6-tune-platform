@@ -31,6 +31,7 @@ const {
 const ogLocale = lang.replace('-', '_');
 
 const cfAnalyticsToken = env.CLOUDFLARE_ANALYTICS_TOKEN;
+const gscToken = env.GOOGLE_SITE_VERIFICATION;
 
 const origin = `${Astro.url.protocol}//${Astro.url.host}`;
 const absolute = (p: string) => (p.startsWith('http') ? p : `${origin}${p}`);
@@ -47,6 +48,7 @@ const ogTitle = title.includes('touge') ? title : `${title} — touge`;
   <meta name="description" content={description} />
   <link rel="canonical" href={canonicalUrl} />
   {hreflangs.map((h) => <link rel="alternate" hreflang={h.lang} href={absolute(h.href)} />)}
+  {gscToken && <meta name="google-site-verification" content={gscToken} />}
 
   {cfAnalyticsToken && (
     <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={`{"token": "${cfAnalyticsToken}"}`}></script>
