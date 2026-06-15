@@ -29,12 +29,26 @@ export type TuneRow = {
   updated_at: number;
 };
 
+export type CarRow = {
+  id: number;
+  year: number;
+  make: string;
+  model: string;
+  slug: string;
+  chassis_code: string | null;
+  body_style: string | null;
+  country: string | null;
+  era: string | null;
+  notable_for: string | null;
+  description_zh: string | null;
+};
+
 export async function getCarBySlug(db: D1Database, slug: string) {
-  return db.prepare('SELECT * FROM cars WHERE slug = ?').bind(slug).first<{ id: number; year: number; make: string; model: string; slug: string }>();
+  return db.prepare('SELECT * FROM cars WHERE slug = ?').bind(slug).first<CarRow>();
 }
 
 export async function getCarById(db: D1Database, id: number) {
-  return db.prepare('SELECT * FROM cars WHERE id = ?').bind(id).first<{ id: number; year: number; make: string; model: string; slug: string }>();
+  return db.prepare('SELECT * FROM cars WHERE id = ?').bind(id).first<CarRow>();
 }
 
 export async function getTrackBySlug(db: D1Database, slug: string) {
