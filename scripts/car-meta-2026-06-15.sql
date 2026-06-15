@@ -81,3 +81,14 @@ UPDATE cars SET chassis_code='Series 3', body_style='Coupe', country='UK', era='
 
 -- ============ France (1) ============
 UPDATE cars SET chassis_code='A110', body_style='Coupe', country='France', era='modern', notable_for='搭載 1.8 升四缸渦輪引擎輸出 292 匹，中置後驅配置車重僅約 1114 公斤' WHERE slug='alpine-a110-s-2022';
+
+-- ============ Hero cars: description_zh (Layer 1) ============
+UPDATE cars SET description_zh='R34 是 Skyline GT-R 系列在 R 底盤時代的最終演化，搭載 RB26DETT 2.6L 直六雙渦輪引擎，原廠帳面 280 hp 但實測動力遠高於此。配 ATTESA E-TS Pro 主動四驅與 Super HICAS 後輪轉向，底盤潛力極深。在 Forza Horizon 6 中 PI 可從 A 級堆到 S2，跑山、抓地、甩尾三種方向皆主流，社群最常見的是 S1 後驅化偏 grip 設定。' WHERE slug='nissan-skyline-gtr-r34-1999';
+
+UPDATE cars SET description_zh='A80 Supra 搭載傳奇的 2JZ-GTE 3.0L 直六雙渦輪鐵塊引擎，原廠 276 hp，但鑄鐵缸體支撐改裝動力到 700 hp+ 仍可靠運作的口碑讓它成為改車文化象徵。後驅、6 速手排、車重約 1500 kg。在 Forza Horizon 6 中 Supra 是 drag race 與直線加速的常見選擇，touge 與 drift 也都吃得開，PI 主流在 S1。' WHERE slug='toyota-supra-mk4-1994';
+
+UPDATE cars SET description_zh='FD3S 是 Mazda 第三代 RX-7，搭載 13B-REW 1.3L 雙轉子序列雙渦輪轉子引擎，原廠約 255 hp，車重僅 1280 kg。後驅、前中置布局、50:50 配重，過彎平衡感是同期日系跑車頂尖。轉子引擎油耗與耐久度差是公認弱點，但在 Forza Horizon 6 中無此顧慮——FD 是 touge 與 drift 場景的常駐定番，PI A 到 S1 都常見。' WHERE slug='mazda-rx7-fd3s-1992';
+
+UPDATE cars SET description_zh='NSX-R 是 NSX 系列的賽道導向版本，C32B 3.2L V6 自然進氣引擎輸出約 290 hp，搭配 6 速手排與中置後驅布局。Type R 套件包含強化懸吊、輕量化座椅、車重減至 1270 kg。Honda 與 Ayrton Senna 開發的底盤調校讓它在山道與賽道擁有極高完成度。Forza Horizon 6 中 NSX-R 是 grip 與 circuit 路線的代表，PI 主流在 A / S1。' WHERE slug='honda-nsx-r-2002';
+
+UPDATE cars SET description_zh='992.1 世代的 GT3 RS 是 Porsche 量產車裡最賽道導向的 911，搭載 4.0L 平六自然進氣引擎輸出 525 hp，配 PDK 7 速雙離合與後驅布局。最大特色是主動式空力系統——可變角度的尾翼與前下擾流提供超過 800 kg 下壓力。Forza Horizon 6 中 GT3 RS 是 S1 / S2 grip 與圈速調校的首選車型之一，山道與賽道皆強。' WHERE slug='porsche-911-gt3-rs-992-2023';
