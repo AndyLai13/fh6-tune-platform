@@ -2,6 +2,7 @@
 import Base from '~/layouts/Base.astro';
 import TuneCard from '~/components/TuneCard.astro';
 import { getCarBySlug, listTunesForCar } from '~/lib/db';
+import { COUNTRY_ZH, BODY_STYLE_ZH } from '~/lib/car-i18n';
 import { env } from 'cloudflare:workers';
 
 export const prerender = false;
@@ -30,6 +31,9 @@ const tunes = (tunesResult.results ?? []) as Array<{
   car_make: string;
   car_model: string;
 }>;
+
+const countryZh = car.country ? (COUNTRY_ZH[car.country] ?? car.country) : null;
+const bodyStyleZh = car.body_style ? (BODY_STYLE_ZH[car.body_style] ?? car.body_style) : null;
 
 const carLabel = `${car.year} ${car.make} ${car.model}`;
 const title = `${carLabel} 調校`;
@@ -62,9 +66,25 @@ const jsonLd = {
   <section class="px-6 py-10 max-w-6xl mx-auto">
     <div class="font-mono text-[11px] text-pink tracking-wider3 mb-2">＞ CAR</div>
     <h1 class="text-[36px] md:text-[48px] font-extrabold mb-2">{carLabel}</h1>
-    <div class="font-mono text-[12px] text-text-mute mb-8">
+    <div class={`font-mono text-[12px] text-text-mute ${car.description_zh || car.notable_for ? 'mb-4' : 'mb-8'}`}>
       Forza Horizon 6 · {tunes.length} 筆社群調校
     </div>
+
+    {car.description_zh ? (
+      <div class="max-w-2xl mb-8 text-text-soft text-[15px] leading-relaxed">
+        <p>{car.description_zh}</p>
+      </div>
+    ) : car.notable_for ? (
+      <div class="max-w-2xl mb-8 text-text-soft text-[15px] leading-relaxed">
+        <p>
+          {carLabel}
+          {car.chassis_code && `（底盤 ${car.chassis_code}）`}
+          是 {car.era ?? countryZh ?? ''}
+          {bodyStyleZh && ` 的${countryZh ?? ''}${bodyStyleZh}`}
+          。{car.notable_for}。
+        </p>
+      </div>
+    ) : null}
 
     <h2 class="text-[20px] font-bold mb-4">所有調校 · {tunes.length}</h2>
 
