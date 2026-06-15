@@ -52,7 +52,7 @@ ALTER TABLE cars ADD COLUMN description_zh TEXT;
 
 Run:
 ```bash
-npx wrangler d1 execute fh6-tune-platform-local --local --file=migrations/0008_car_descriptions.sql
+npx wrangler d1 execute fh6-tune-platform-prod --local --file=migrations/0008_car_descriptions.sql
 ```
 
 Expected: `Executed N commands` 無 error。
@@ -61,7 +61,7 @@ Expected: `Executed N commands` 無 error。
 
 Run:
 ```bash
-npx wrangler d1 execute fh6-tune-platform-local --local --command="SELECT chassis_code, body_style, country, era, notable_for, description_zh FROM cars LIMIT 1;"
+npx wrangler d1 execute fh6-tune-platform-prod --local --command="SELECT chassis_code, body_style, country, era, notable_for, description_zh FROM cars LIMIT 1;"
 ```
 
 Expected: 回 1 row、全 6 個欄位皆為 `null`、無 error。
@@ -360,7 +360,7 @@ grep -E "^\s+\{ year:" src/data/cars-seed.ts | head -80
 
 並查 prod DB 看實際全部 67 台（含 0006 migration 加的）：
 ```bash
-npx wrangler d1 execute fh6-tune-platform-local --local --command="SELECT year, make, model, slug FROM cars ORDER BY make, year;" --json | head -100
+npx wrangler d1 execute fh6-tune-platform-prod --local --command="SELECT year, make, model, slug FROM cars ORDER BY make, year;" --json | head -100
 ```
 
 - [ ] **Step 2: 列出 5 台手寫車並把剩餘車按 country group 分類**
@@ -519,7 +519,7 @@ direction in Forza Horizon 6."
 - [ ] **Step 1: Apply 到 local**
 
 ```bash
-npx wrangler d1 execute fh6-tune-platform-local --local --file=scripts/car-meta-2026-06-15.sql
+npx wrangler d1 execute fh6-tune-platform-prod --local --file=scripts/car-meta-2026-06-15.sql
 ```
 
 Expected: 67 個 UPDATE 全 success、無 error。
@@ -527,12 +527,12 @@ Expected: 67 個 UPDATE 全 success、無 error。
 - [ ] **Step 2: 驗證資料**
 
 ```bash
-npx wrangler d1 execute fh6-tune-platform-local --local --command="SELECT COUNT(*) FROM cars WHERE notable_for IS NOT NULL;"
+npx wrangler d1 execute fh6-tune-platform-prod --local --command="SELECT COUNT(*) FROM cars WHERE notable_for IS NOT NULL;"
 ```
 Expected: 67。
 
 ```bash
-npx wrangler d1 execute fh6-tune-platform-local --local --command="SELECT COUNT(*) FROM cars WHERE description_zh IS NOT NULL;"
+npx wrangler d1 execute fh6-tune-platform-prod --local --command="SELECT COUNT(*) FROM cars WHERE description_zh IS NOT NULL;"
 ```
 Expected: 5。
 
